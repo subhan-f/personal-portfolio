@@ -9,6 +9,8 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-6-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
 [![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
 
+![Portfolio Demo](apps/web/public/demo.gif)
+
 ---
 
 ## Monorepo Structure
