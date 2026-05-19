@@ -93,6 +93,8 @@ export interface StrapiProject {
   image?: StrapiMedia | null;
   gallery?: StrapiMedia[] | null;
   bgColor: string;
+  publishedAt?: string;
+  updatedAt?: string;
 }
 
 // ─── Experience ───────────────────────────────────────────────────────────────
@@ -110,6 +112,8 @@ export interface StrapiExperience {
   achievements: string[];
   technologies: string[];
   image?: StrapiMedia | null;
+  publishedAt?: string;
+  updatedAt?: string;
 }
 
 // ─── Testimonial ──────────────────────────────────────────────────────────────

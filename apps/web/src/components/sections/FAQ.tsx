@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 
-const faqs = [
+export const faqs = [
   {
     question: 'What automation tools do you specialize in?',
     answer: 'I specialize in n8n, Make (Integromat), Zapier, and custom API integrations. I build agentic AI workflows that connect CRMs, spreadsheets, and communication tools.',
@@ -15,22 +15,8 @@ const faqs = [
   },
 ];
 
-const faqSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'FAQPage',
-  mainEntity: faqs.map(faq => ({
-    '@type': 'Question',
-    name: faq.question,
-    acceptedAnswer: {
-      '@type': 'Answer',
-      text: faq.answer,
-    },
-  })),
-};
-
 export const FAQ = () => (
   <section id="faq" className="py-20 px-6 bg-black text-white">
-    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
     <div className="max-w-4xl mx-auto">
       <motion.h2 className="text-4xl font-bold text-center mb-12">Frequently Asked Questions</motion.h2>
       <div className="space-y-6">

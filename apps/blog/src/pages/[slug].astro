@@ -200,6 +200,25 @@ const schema = {
         <!-- Share -->
         <SocialShare title={post.title} url={postUrl} />
 
+        <!-- Hire-me CTA -->
+        <div
+          class="mt-10 p-6 sm:p-8 rounded-2xl border text-center"
+          style="background: linear-gradient(135deg, oklch(0.790 0.137 193.8 / 0.06) 0%, oklch(0.750 0.15 160 / 0.06) 100%); border-color: oklch(0.790 0.137 193.8 / 0.2);"
+        >
+          <p class="text-sm font-semibold uppercase tracking-widest mb-2" style="color: var(--brand);">Want results like this?</p>
+          <p class="text-lg font-bold mb-1" style="color: var(--text-1);">Let's build something together.</p>
+          <p class="text-sm mb-5" style="color: var(--text-3);">I'm available for AI automation, full-stack projects, and consulting.</p>
+          <a
+            href="https://subhanfarrakh.com/contact"
+            target="_blank"
+            rel="noopener"
+            class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg font-semibold text-sm transition-opacity hover:opacity-80"
+            style="background: var(--brand); color: var(--bg);"
+          >
+            Work with me →
+          </a>
+        </div>
+
         <!-- Prev / Next -->
         {(prevPost || nextPost) && (
           <nav

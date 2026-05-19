@@ -29,6 +29,13 @@ export const Footer = () => {
         <p className="text-gray-300 italic max-w-xl">
           "Do what you love the BEST, let me automate the REST." 😜
         </p>
+        <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 text-xs text-gray-500">
+          <a href="/privacy-policy" className="hover:text-gray-300 transition-colors">Privacy Policy</a>
+          <span aria-hidden="true">·</span>
+          <a href="/terms" className="hover:text-gray-300 transition-colors">Terms of Service</a>
+          <span aria-hidden="true">·</span>
+          <a href="https://blog.subhanfarrakh.com" target="_blank" rel="noopener" className="hover:text-gray-300 transition-colors">Blog</a>
+        </div>
         <p className="text-xs text-gray-400">
           &copy; {new Date().getFullYear()} Subhan Farrakh. All rights reserved.
         </p>

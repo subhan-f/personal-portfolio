@@ -68,8 +68,15 @@ const currentPath = Astro.url.pathname;
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
+    <!-- rel=me — entity disambiguation for social profiles -->
+    <link rel="me" href="https://x.com/SubhanFarrakh" />
+    <link rel="me" href="https://github.com/subhan-f" />
+    <link rel="me" href="https://linkedin.com/in/subhanf" />
+    <!-- Cross-reference blog -->
+    <link rel="alternate" type="text/html" href="https://blog.subhanfarrakh.com" title="Subhan Farrakh Blog" />
     <!-- JSON-LD -->
     <script is:inline type="application/ld+json" set:html={JSON.stringify(myData)} />
+    <slot name="head" />
     <ClientRouter />
   </head>
   <body class="font-sans antialiased bg-black text-white overflow-x-hidden">

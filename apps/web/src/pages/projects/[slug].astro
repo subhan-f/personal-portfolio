@@ -31,7 +31,8 @@ const schema = {
   ...(imageUrl && { image: imageUrl }),
   applicationCategory: 'BusinessApplication',
   operatingSystem: 'Web',
-  datePublished: project.year,
+  datePublished: project.publishedAt ?? project.year,
+  ...(project.updatedAt && { dateModified: project.updatedAt }),
   creator: {
     '@type': 'Person',
     name: 'Subhan Farrakh',

@@ -1,0 +1,124 @@
+---
+import MainLayout from '@layouts/MainLayout.astro';
+
+const lastUpdated = 'May 19, 2026';
+---
+
+<MainLayout
+  title="Terms of Service | Subhan Farrakh"
+  description="Terms of service for subhanfarrakh.com — conditions for using this website."
+>
+  <section class="min-h-screen bg-black text-white py-24 px-4 md:px-8">
+    <div class="max-w-3xl mx-auto">
+      <h1 class="text-4xl font-bold mb-2">Terms of Service</h1>
+      <p class="text-gray-400 text-sm mb-12">Last updated: {lastUpdated}</p>
+
+      <div class="space-y-10 text-gray-300 leading-relaxed">
+
+        <div>
+          <h2 class="text-xl font-semibold text-white mb-3">1. Acceptance of Terms</h2>
+          <p>
+            By accessing or using <strong class="text-white">subhanfarrakh.com</strong> (the "Site"),
+            you agree to be bound by these Terms of Service. If you do not agree, please do not use
+            the Site.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="text-xl font-semibold text-white mb-3">2. Use of the Site</h2>
+          <p class="mb-3">You may use the Site for lawful purposes only. You agree not to:</p>
+          <ul class="list-disc list-inside space-y-2">
+            <li>Scrape, copy, or reproduce content for commercial redistribution without permission.</li>
+            <li>Attempt to gain unauthorised access to any part of the Site or its infrastructure.</li>
+            <li>Use the Site in any way that could harm, disable, or impair its functionality.</li>
+            <li>Submit false or misleading information via the contact form.</li>
+          </ul>
+        </div>
+
+        <div>
+          <h2 class="text-xl font-semibold text-white mb-3">3. Intellectual Property</h2>
+          <p>
+            All content on this Site — including text, design, code samples, images, and case studies
+            — is the property of Subhan Farrakh unless otherwise stated. You may not reproduce,
+            distribute, or create derivative works without express written permission.
+          </p>
+          <p class="mt-3">
+            Open-source code shared on{' '}
+            <a href="https://github.com/subhan-f" target="_blank" rel="noopener" class="text-[#1cd8d2] hover:underline">
+              GitHub
+            </a>{' '}
+            is subject to the licence specified in the respective repository.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="text-xl font-semibold text-white mb-3">4. Contact Form & Enquiries</h2>
+          <p>
+            Submitting a message through the contact form does not create a binding contract or
+            guarantee of services. All project engagements are governed by a separate written
+            agreement signed by both parties.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="text-xl font-semibold text-white mb-3">5. Disclaimer of Warranties</h2>
+          <p>
+            The Site is provided "as is" without warranties of any kind, express or implied. I do
+            not warrant that the Site will be uninterrupted, error-free, or free of viruses or other
+            harmful components.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="text-xl font-semibold text-white mb-3">6. Limitation of Liability</h2>
+          <p>
+            To the fullest extent permitted by law, Subhan Farrakh shall not be liable for any
+            indirect, incidental, or consequential damages arising from your use of, or inability to
+            use, this Site.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="text-xl font-semibold text-white mb-3">7. External Links</h2>
+          <p>
+            This Site may link to external websites. I am not responsible for the content, privacy
+            practices, or availability of those sites.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="text-xl font-semibold text-white mb-3">8. Changes to These Terms</h2>
+          <p>
+            I reserve the right to update these Terms at any time. Continued use of the Site after
+            changes are posted constitutes acceptance of the revised Terms.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="text-xl font-semibold text-white mb-3">9. Governing Law</h2>
+          <p>
+            These Terms are governed by the laws of Pakistan. Any disputes will be subject to the
+            jurisdiction of courts in Islamabad, Pakistan.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="text-xl font-semibold text-white mb-3">10. Contact</h2>
+          <p>
+            Questions about these Terms? Email{' '}
+            <a href="mailto:subhanfarrakh5@gmail.com" class="text-[#1cd8d2] hover:underline">
+              subhanfarrakh5@gmail.com
+            </a>.
+          </p>
+        </div>
+
+      </div>
+
+      <div class="mt-16 pt-8 border-t border-white/10 flex gap-4 text-sm text-gray-400">
+        <a href="/privacy-policy" class="hover:text-white transition-colors">Privacy Policy</a>
+        <a href="/contact" class="hover:text-white transition-colors">Contact</a>
+        <a href="/" class="hover:text-white transition-colors">← Back to Home</a>
+      </div>
+    </div>
+  </section>
+</MainLayout>

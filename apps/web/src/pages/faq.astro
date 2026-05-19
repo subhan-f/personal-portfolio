@@ -1,9 +1,22 @@
 ---
 import MainLayout from '@layouts/MainLayout.astro';
-import { FAQ } from '@components/sections/FAQ';
+import { FAQ, faqs } from '@components/sections/FAQ';
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((faq) => ({
+    '@type': 'Question',
+    name: faq.question,
+    acceptedAnswer: { '@type': 'Answer', text: faq.answer },
+  })),
+};
 ---
 
-<MainLayout title="FAQ | Subhan Farrakh" description="Frequently asked questions about Subhan Farrakh's web development services.">
+<MainLayout title="FAQ | Subhan Farrakh" description="Frequently asked questions about Subhan Farrakh's AI automation and web development services.">
+  <Fragment slot="head">
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+  </Fragment>
   <h1 class="sr-only">Frequently Asked Questions</h1>
   <FAQ client:visible />
 </MainLayout>
