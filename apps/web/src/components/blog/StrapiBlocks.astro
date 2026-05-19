@@ -1,5 +1,5 @@
 ---
-import { marked } from 'marked';
+import { renderMarkdown } from '@lib/markdown';
 import { getStrapiMedia } from '@lib/strapi';
 import type { StrapiBlock } from '@lib/strapi';
 
@@ -8,17 +8,23 @@ interface Props {
 }
 
 const { blocks } = Astro.props;
+
+const rendered = await Promise.all(
+  blocks.map(async (block) => {
+    if (block.__component === 'shared.rich-text') {
+      return { type: 'html', html: await renderMarkdown(block.body ?? '') };
+    }
+    return { type: 'raw', block };
+  })
+);
 ---
 
-{blocks.map((block) => {
-  if (block.__component === 'shared.rich-text') {
-    return (
-      <div
-        class="prose prose-invert max-w-none"
-        set:html={marked.parse(block.body ?? '')}
-      />
-    );
+{rendered.map((item) => {
+  if (item.type === 'html') {
+    return <div class="prose max-w-none" set:html={item.html} />;
   }
+
+  const block = (item as { type: 'raw'; block: StrapiBlock }).block;
 
   if (block.__component === 'shared.media' && block.file) {
     return (
@@ -35,8 +41,10 @@ const { blocks } = Astro.props;
 
   if (block.__component === 'shared.quote') {
     return (
-      <blockquote class="border-l-4 border-[#1cd8d2] pl-6 my-8 italic text-gray-300">
-        {block.title && <p class="font-semibold text-white not-italic mb-1">{block.title}</p>}
+      <blockquote class="border-l-4 border-[#1cd8d2] pl-6 my-8 italic text-gray-500 dark:text-gray-400">
+        {block.title && (
+          <p class="font-semibold text-gray-900 dark:text-white not-italic mb-1">{block.title}</p>
+        )}
         <p>{block.body}</p>
       </blockquote>
     );
@@ -59,3 +67,31 @@ const { blocks } = Astro.props;
 
   return null;
 })}
+
+<script>
+  // Inject copy buttons into every Shiki code block after the DOM is ready
+  document.querySelectorAll<HTMLElement>('.code-block').forEach((block) => {
+    const pre = block.querySelector('pre');
+    if (!pre) return;
+
+    const btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.setAttribute('aria-label', 'Copy code');
+    btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>Copy`;
+
+    btn.addEventListener('click', async () => {
+      const code = pre.querySelector('code')?.innerText ?? pre.innerText;
+      try {
+        await navigator.clipboard.writeText(code);
+        btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Copied!`;
+        setTimeout(() => {
+          btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>Copy`;
+        }, 2000);
+      } catch {
+        btn.textContent = 'Failed';
+      }
+    });
+
+    block.appendChild(btn);
+  });
+</script>

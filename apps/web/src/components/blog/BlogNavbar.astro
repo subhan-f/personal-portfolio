@@ -1,0 +1,57 @@
+---
+import { BlogThemeToggle } from './BlogThemeToggle';
+import { BlogSearch } from './BlogSearch';
+import { fetchStrapi } from '@lib/strapi';
+import type { StrapiList, StrapiArticle } from '@lib/strapi';
+
+const { data: posts } = await fetchStrapi<StrapiList<StrapiArticle>>(
+  '/articles',
+  { 'sort': 'publishedAt:desc' }
+);
+
+const searchPosts = posts.map((p) => ({
+  title: p.title,
+  description: p.description ?? '',
+  slug: p.slug,
+  tags: p.tags ?? (p.category ? [p.category.name] : []),
+}));
+---
+
+<header
+  class="sticky top-0 z-50 border-b border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-[#0a0a0a]/80 backdrop-blur-md"
+>
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-4">
+    <a
+      href="/blog"
+      class="font-bold text-lg tracking-tight text-gray-900 dark:text-white hover:text-[#1cd8d2] transition-colors shrink-0"
+    >
+      SF<span class="text-[#1cd8d2]">.</span>
+    </a>
+
+    <!-- Search island — center/fill -->
+    <div class="flex-1 flex justify-center">
+      <BlogSearch posts={searchPosts} client:load />
+    </div>
+
+    <div class="flex items-center gap-1 shrink-0">
+      <a
+        href="/"
+        class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"><path d="m15 18-6-6 6-6"></path></svg
+        >
+        Portfolio
+      </a>
+      <BlogThemeToggle client:load />
+    </div>
+  </div>
+</header>

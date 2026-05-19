@@ -1,92 +1,204 @@
 ---
-import MainLayout from '@layouts/MainLayout.astro';
+import BlogLayout from '@layouts/BlogLayout.astro';
 import { fetchStrapi, getStrapiMedia } from '@lib/strapi';
+import { calcReadingTime } from '@lib/markdown';
 import type { StrapiList, StrapiArticle } from '@lib/strapi';
 
 const { data: posts } = await fetchStrapi<StrapiList<StrapiArticle>>(
   '/articles',
-  { 'populate[cover]': 'true', 'populate[category]': 'true', 'sort': 'publishedAt:desc' }
+  {
+    'populate[cover]': 'true',
+    'populate[category]': 'true',
+    'populate[blocks][populate]': '*',
+    'sort': 'publishedAt:desc',
+  }
 );
 
 const allTags = [...new Set(
   posts.flatMap((p) => p.tags ?? (p.category ? [p.category.name] : []))
 )].sort();
+
+const currentTag = Astro.url.searchParams.get('tag');
+const filtered = currentTag
+  ? posts.filter((p) => {
+      const tags = p.tags ?? (p.category ? [p.category.name] : []);
+      return tags.some((t: string) => t.toLowerCase().replace(/[\s/]+/g, '-') === currentTag);
+    })
+  : posts;
+
+const [featuredPost, ...restPosts] = filtered;
 ---
 
-<MainLayout title="Blog | Subhan Farrakh" description="Articles about web development, React, Astro, and modern frontend technologies.">
-  <section class="min-h-screen bg-black text-white py-20 px-4 md:px-8">
-    <div class="max-w-6xl mx-auto">
-      <div class="text-center mb-16">
-        <h1 class="text-4xl md:text-6xl font-bold mb-4">
-          <span class="bg-gradient-to-r from-[#1cd8d2] via-[#00bf8f] to-[#1cd8d2] bg-clip-text text-transparent">Blog</span>
-        </h1>
-        <p class="text-gray-400 text-lg max-w-2xl mx-auto">
-          Thoughts on web development, design, and the tools I use to build modern applications.
-        </p>
-      </div>
+<BlogLayout
+  title="Blog"
+  description="Articles on web development, AI automation, and modern engineering."
+>
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 py-16 sm:py-20">
 
-      <!-- Tags -->
-      <div class="flex flex-wrap justify-center gap-2 mb-12">
-        <a href="/blog" class="px-4 py-2 rounded-full text-sm font-medium bg-white/10 text-white hover:bg-white/20 transition-colors">
+    <!-- Hero -->
+    <div class="mb-10">
+      <h1 class="text-4xl sm:text-5xl font-bold tracking-tight text-gray-900 dark:text-white mb-3">
+        Blog
+      </h1>
+      <p class="text-lg text-gray-500 dark:text-gray-400 max-w-xl">
+        Thoughts on web development, AI, and the tools I use to build modern products.
+      </p>
+    </div>
+
+    <!-- Tag filters -->
+    {allTags.length > 0 && (
+      <div class="flex flex-wrap gap-2 mb-4">
+        <a
+          href="/blog"
+          class:list={[
+            'px-3 py-1 rounded-full text-sm font-medium transition-colors',
+            !currentTag
+              ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900'
+              : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700',
+          ]}
+        >
           All
         </a>
-        {allTags.map((tag) => (
-          <a
-            href={`/blog/tag/${tag.toLowerCase().replace(/[\s/]+/g, '-')}`}
-            class="px-4 py-2 rounded-full text-sm font-medium bg-white/5 text-gray-300 hover:bg-white/10 transition-colors border border-white/10"
-          >
-            {tag}
-          </a>
-        ))}
-      </div>
-
-      <!-- Posts Grid -->
-      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {posts.map((post) => {
-          const tags = post.tags ?? (post.category ? [post.category.name] : []);
-          const coverUrl = getStrapiMedia(post.cover?.url);
+        {allTags.map((tag: string) => {
+          const slug = tag.toLowerCase().replace(/[\s/]+/g, '-');
+          const active = currentTag === slug;
           return (
             <a
-              href={`/blog/${post.slug}`}
-              class="group block bg-gray-900/50 rounded-xl border border-white/10 overflow-hidden hover:border-[#1cd8d2]/50 transition-all duration-300 hover:-translate-y-1"
+              href={`/blog?tag=${slug}`}
+              class:list={[
+                'px-3 py-1 rounded-full text-sm font-medium transition-colors',
+                active
+                  ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900'
+                  : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700',
+              ]}
             >
-              {coverUrl && (
-                <div class="aspect-video overflow-hidden">
-                  <img
-                    src={coverUrl}
-                    alt={post.cover?.alternativeText ?? post.title}
-                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    loading="lazy"
-                  />
-                </div>
-              )}
-              <div class="p-6">
-                <div class="flex flex-wrap gap-2 mb-3">
-                  {tags.slice(0, 3).map((tag) => (
-                    <span class="text-xs px-3 py-1 bg-white/10 text-gray-300 rounded-full">{tag}</span>
-                  ))}
-                </div>
-                <h2 class="text-xl font-bold mb-2 group-hover:text-[#1cd8d2] transition-colors">
-                  {post.title}
-                </h2>
-                <p class="text-gray-400 text-sm mb-4 line-clamp-2">{post.description}</p>
-                <time class="text-xs text-gray-500" datetime={post.publishedAt}>
-                  {new Date(post.publishedAt).toLocaleDateString('en-US', {
-                    year: 'numeric', month: 'long', day: 'numeric',
-                  })}
-                </time>
-                <div class="mt-4 text-sm font-semibold text-[#1cd8d2]">Read Article -></div>
-              </div>
+              {tag}
             </a>
           );
         })}
       </div>
+    )}
 
-      {posts.length === 0 && (
-        <div class="text-center py-20 text-gray-500">
-          <p class="text-xl">No posts yet. Check back soon!</p>
-        </div>
-      )}
-    </div>
-  </section>
-</MainLayout>
+    <!-- Post count -->
+    <p class="text-sm text-gray-400 dark:text-gray-500 mb-8">
+      {filtered.length} {filtered.length === 1 ? 'post' : 'posts'}
+    </p>
+
+    {filtered.length === 0 && (
+      <div class="text-center py-24 text-gray-400 dark:text-gray-500">
+        <p class="text-lg">No posts found.</p>
+        <a href="/blog" class="text-sm mt-2 inline-block text-[#1cd8d2] hover:underline">Clear filter</a>
+      </div>
+    )}
+
+    {filtered.length > 0 && (() => {
+      const featuredCoverUrl = getStrapiMedia(featuredPost.cover?.url);
+      const featuredTags = featuredPost.tags ?? (featuredPost.category ? [featuredPost.category.name] : []);
+      const featuredReadingTime = calcReadingTime(featuredPost.blocks);
+
+      return (
+        <>
+          <!-- Featured post — full-width hero card -->
+          <a
+            href={`/blog/${featuredPost.slug}`}
+            class="group block mb-8 rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 overflow-hidden hover:border-[#1cd8d2]/60 hover:shadow-xl dark:hover:shadow-[#1cd8d2]/5 transition-all duration-300"
+          >
+            <div class="lg:flex">
+              <div class="lg:w-1/2 aspect-video lg:aspect-auto overflow-hidden bg-gray-100 dark:bg-gray-800">
+                {featuredCoverUrl ? (
+                  <img
+                    src={featuredCoverUrl}
+                    alt={featuredPost.cover?.alternativeText ?? featuredPost.title}
+                    class="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500"
+                    loading="eager"
+                  />
+                ) : (
+                  <div class="w-full h-full bg-linear-to-br from-[#1cd8d2]/20 to-[#00bf8f]/20 flex items-center justify-center">
+                    <span class="text-6xl font-bold text-[#1cd8d2]/30">{featuredPost.title.charAt(0)}</span>
+                  </div>
+                )}
+              </div>
+              <div class="lg:w-1/2 p-6 sm:p-8 flex flex-col justify-center">
+                <div class="flex flex-wrap gap-1.5 mb-3">
+                  {featuredTags.slice(0, 3).map((tag: string) => (
+                    <span class="text-xs px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 font-medium">{tag}</span>
+                  ))}
+                  <span class="text-xs px-2 py-0.5 rounded-full bg-[#1cd8d2]/10 text-[#1cd8d2] font-medium">Featured</span>
+                </div>
+                <h2 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-3 leading-snug group-hover:text-[#1cd8d2] transition-colors">
+                  {featuredPost.title}
+                </h2>
+                <p class="text-gray-500 dark:text-gray-400 text-sm mb-5 line-clamp-3">{featuredPost.description}</p>
+                <div class="flex items-center justify-between text-xs text-gray-400 dark:text-gray-500">
+                  <time datetime={featuredPost.publishedAt}>
+                    {new Date(featuredPost.publishedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+                  </time>
+                  <div class="flex items-center gap-3">
+                    <span>{featuredReadingTime} min read</span>
+                    <span class="font-medium text-[#1cd8d2]">Read →</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </a>
+
+          <!-- Remaining posts grid -->
+          {restPosts.length > 0 && (
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {restPosts.map((post: StrapiArticle) => {
+                const tags = post.tags ?? (post.category ? [post.category.name] : []);
+                const coverUrl = getStrapiMedia(post.cover?.url);
+                const readingTime = calcReadingTime(post.blocks);
+                return (
+                  <a
+                    href={`/blog/${post.slug}`}
+                    class="group flex flex-col rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 overflow-hidden hover:border-[#1cd8d2]/60 hover:shadow-lg dark:hover:shadow-[#1cd8d2]/5 transition-all duration-200 hover:-translate-y-0.5"
+                  >
+                    {coverUrl ? (
+                      <div class="aspect-video overflow-hidden bg-gray-100 dark:bg-gray-800">
+                        <img
+                          src={coverUrl}
+                          alt={post.cover?.alternativeText ?? post.title}
+                          class="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-500"
+                          loading="lazy"
+                        />
+                      </div>
+                    ) : (
+                      <div class="aspect-video bg-linear-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 flex items-center justify-center">
+                        <span class="text-3xl font-bold text-gray-300 dark:text-gray-600">{post.title.charAt(0)}</span>
+                      </div>
+                    )}
+
+                    <div class="flex flex-col flex-1 p-5">
+                      {tags.length > 0 && (
+                        <div class="flex flex-wrap gap-1.5 mb-3">
+                          {tags.slice(0, 3).map((tag: string) => (
+                            <span class="text-xs px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 font-medium">{tag}</span>
+                          ))}
+                        </div>
+                      )}
+                      <h2 class="text-base font-semibold text-gray-900 dark:text-white mb-2 leading-snug group-hover:text-[#1cd8d2] transition-colors line-clamp-2">
+                        {post.title}
+                      </h2>
+                      <p class="text-sm text-gray-500 dark:text-gray-400 line-clamp-2 mb-4 flex-1">{post.description}</p>
+                      <div class="flex items-center justify-between text-xs text-gray-400 dark:text-gray-500">
+                        <time datetime={post.publishedAt}>
+                          {new Date(post.publishedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+                        </time>
+                        <div class="flex items-center gap-2">
+                          <span>{readingTime} min read</span>
+                          <span class="font-medium text-[#1cd8d2] opacity-0 group-hover:opacity-100 transition-opacity">→</span>
+                        </div>
+                      </div>
+                    </div>
+                  </a>
+                );
+              })}
+            </div>
+          )}
+        </>
+      );
+    })()}
+
+  </div>
+</BlogLayout>

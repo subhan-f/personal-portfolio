@@ -1,7 +1,14 @@
 ---
 import BlogLayout from '@layouts/BlogLayout.astro';
 import StrapiBlocks from '@components/blog/StrapiBlocks.astro';
+import TableOfContents from '@components/blog/TableOfContents.astro';
+import { TableOfContentsMobile } from '@components/blog/TableOfContentsMobile';
+import SocialShare from '@components/blog/SocialShare.astro';
+import AuthorCard from '@components/blog/AuthorCard.astro';
+import NewsletterCTA from '@components/blog/NewsletterCTA.astro';
+import { GiscusComments } from '@components/blog/GiscusComments';
 import { fetchStrapi, getStrapiMedia } from '@lib/strapi';
+import { extractHeadings, calcReadingTime } from '@lib/markdown';
 import type { StrapiList, StrapiArticle } from '@lib/strapi';
 
 export async function getStaticPaths() {
@@ -9,7 +16,6 @@ export async function getStaticPaths() {
     '/articles',
     { 'sort': 'publishedAt:desc' }
   );
-
   return posts.map((post, index) => ({
     params: { slug: post.slug },
     props: { post, prevPost: posts[index + 1] ?? null, nextPost: posts[index - 1] ?? null },
@@ -22,7 +28,6 @@ const { post, prevPost, nextPost } = Astro.props as {
   nextPost: StrapiArticle | null;
 };
 
-// Fetch full post with all populated relations
 const { data: posts } = await fetchStrapi<StrapiList<StrapiArticle>>(
   '/articles',
   {
@@ -39,6 +44,16 @@ const tags = fullPost.tags ?? (fullPost.category ? [fullPost.category.name] : []
 const author = fullPost.author?.name ?? 'Subhan Farrakh';
 const pubDate = new Date(fullPost.publishedAt);
 const updatedDate = fullPost.updatedAt ? new Date(fullPost.updatedAt) : undefined;
+const coverUrl = getStrapiMedia(fullPost.cover?.url);
+const readingTime = calcReadingTime(fullPost.blocks);
+const postUrl = `https://subhanfarrakh.com/blog/${fullPost.slug}/`;
+
+// Extract headings for TOC
+const allMarkdown = (fullPost.blocks ?? [])
+  .filter((b) => b.__component === 'shared.rich-text')
+  .map((b) => (b as Extract<typeof b, { __component: 'shared.rich-text' }>).body ?? '')
+  .join('\n\n');
+const tocHeadings = extractHeadings(allMarkdown);
 
 const blogPostingSchema = {
   '@context': 'https://schema.org',
@@ -50,10 +65,7 @@ const blogPostingSchema = {
   author: { '@type': 'Person', name: author, sameAs: 'https://subhanfarrakh.com/#person' },
   ...(fullPost.cover?.url && { image: getStrapiMedia(fullPost.cover.url) }),
   keywords: tags.join(', '),
-  mainEntityOfPage: {
-    '@type': 'WebPage',
-    '@id': `https://subhanfarrakh.com/blog/${fullPost.slug}/`,
-  },
+  mainEntityOfPage: { '@type': 'WebPage', '@id': postUrl },
 };
 
 const breadcrumbSchema = {
@@ -62,7 +74,7 @@ const breadcrumbSchema = {
   itemListElement: [
     { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://subhanfarrakh.com/' },
     { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://subhanfarrakh.com/blog/' },
-    { '@type': 'ListItem', position: 3, name: fullPost.title, item: `https://subhanfarrakh.com/blog/${fullPost.slug}/` },
+    { '@type': 'ListItem', position: 3, name: fullPost.title, item: postUrl },
   ],
 };
 ---
@@ -74,37 +86,148 @@ const breadcrumbSchema = {
   updatedDate={updatedDate}
   author={author}
   tags={tags}
-  image={getStrapiMedia(fullPost.cover?.url)}
+  image={coverUrl}
+  readingTime={readingTime}
 >
   <Fragment slot="head">
-    <script type="application/ld+json" set:html={JSON.stringify(blogPostingSchema)} />
-    <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(blogPostingSchema)} />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
   </Fragment>
 
-  {fullPost.blocks?.length ? (
-    <StrapiBlocks blocks={fullPost.blocks} />
-  ) : (
-    <p class="text-gray-400 italic">This article has no content blocks yet.</p>
-  )}
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-12">
+    <!-- 2-col grid on desktop: [article] [toc sidebar] -->
+    <div class:list={[
+      'lg:grid lg:gap-14',
+      tocHeadings.length >= 2 ? 'lg:grid-cols-[1fr_240px]' : '',
+    ]}>
 
-  <nav slot="post-nav" class="mt-12 pt-8 border-t border-white/10 grid grid-cols-2 gap-4">
-    {prevPost ? (
-      <a
-        href={`/blog/${prevPost.slug}`}
-        class="group flex flex-col p-4 bg-white/5 rounded-xl border border-white/10 hover:border-[#1cd8d2]/50 transition-colors"
-      >
-        <span class="text-xs text-gray-500 mb-1">← Previous</span>
-        <span class="text-sm font-semibold group-hover:text-[#1cd8d2] transition-colors">{prevPost.title}</span>
-      </a>
-    ) : <div />}
-    {nextPost ? (
-      <a
-        href={`/blog/${nextPost.slug}`}
-        class="group flex flex-col items-end text-right p-4 bg-white/5 rounded-xl border border-white/10 hover:border-[#1cd8d2]/50 transition-colors"
-      >
-        <span class="text-xs text-gray-500 mb-1">Next →</span>
-        <span class="text-sm font-semibold group-hover:text-[#1cd8d2] transition-colors">{nextPost.title}</span>
-      </a>
-    ) : <div />}
-  </nav>
+      <!-- ── Article ── -->
+      <article>
+        <!-- Back link -->
+        <a
+          href="/blog"
+          class="inline-flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white mb-10 transition-colors group"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="group-hover:-translate-x-0.5 transition-transform"><path d="m15 18-6-6 6-6"/></svg>
+          All posts
+        </a>
+
+        <!-- Cover image -->
+        {coverUrl && (
+          <div class="rounded-xl overflow-hidden mb-10 aspect-video bg-gray-100 dark:bg-gray-800">
+            <img
+              src={coverUrl}
+              alt={fullPost.cover?.alternativeText ?? fullPost.title}
+              class="w-full h-full object-cover"
+              loading="eager"
+            />
+          </div>
+        )}
+
+        <!-- Tags -->
+        {tags.length > 0 && (
+          <div class="flex flex-wrap gap-2 mb-4">
+            {tags.map((tag: string) => (
+              <a
+                href={`/blog?tag=${tag.toLowerCase().replace(/[\s/]+/g, '-')}`}
+                class="text-xs px-2.5 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 font-medium hover:bg-[#1cd8d2]/10 hover:text-[#1cd8d2] transition-colors"
+              >
+                {tag}
+              </a>
+            ))}
+          </div>
+        )}
+
+        <!-- Title -->
+        <h1 class="text-3xl sm:text-4xl font-bold tracking-tight text-gray-900 dark:text-white mb-5 leading-tight">
+          {fullPost.title}
+        </h1>
+
+        <!-- Meta -->
+        <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-gray-500 dark:text-gray-400 mb-8 pb-8 border-b border-gray-200 dark:border-gray-800">
+          <span>{author}</span>
+          <span class="text-gray-300 dark:text-gray-700">·</span>
+          <time datetime={pubDate.toISOString()}>
+            {pubDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+          </time>
+          <span class="text-gray-300 dark:text-gray-700">·</span>
+          <span>{readingTime} min read</span>
+          {updatedDate && updatedDate.getTime() !== pubDate.getTime() && (
+            <>
+              <span class="text-gray-300 dark:text-gray-700">·</span>
+              <span class="text-xs italic">Updated {updatedDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+            </>
+          )}
+        </div>
+
+        <!-- Mobile TOC -->
+        {tocHeadings.length >= 2 && (
+          <TableOfContentsMobile headings={tocHeadings} client:load />
+        )}
+
+        <!-- Content -->
+        <div>
+          {fullPost.blocks?.length ? (
+            <StrapiBlocks blocks={fullPost.blocks} />
+          ) : (
+            <p class="text-gray-400 italic">This article has no content yet.</p>
+          )}
+        </div>
+
+        <!-- Author card -->
+        {fullPost.author && <AuthorCard author={fullPost.author} />}
+
+        <!-- Social share -->
+        <SocialShare title={fullPost.title} url={postUrl} />
+
+        <!-- Newsletter CTA -->
+        <NewsletterCTA />
+
+        <!-- Prev / Next -->
+        {(prevPost || nextPost) && (
+          <nav class="mt-10 pt-8 border-t border-gray-200 dark:border-gray-800 grid grid-cols-2 gap-4" aria-label="Post navigation">
+            {prevPost ? (
+              <a
+                href={`/blog/${prevPost.slug}`}
+                class="group flex flex-col p-4 rounded-xl border border-gray-200 dark:border-gray-800 hover:border-[#1cd8d2]/50 bg-gray-50 dark:bg-gray-900 transition-colors"
+              >
+                <span class="text-xs text-gray-400 dark:text-gray-500 mb-1.5">← Previous</span>
+                <span class="text-sm font-medium text-gray-800 dark:text-gray-200 group-hover:text-[#1cd8d2] transition-colors line-clamp-2">{prevPost.title}</span>
+              </a>
+            ) : <div />}
+            {nextPost ? (
+              <a
+                href={`/blog/${nextPost.slug}`}
+                class="group flex flex-col items-end text-right p-4 rounded-xl border border-gray-200 dark:border-gray-800 hover:border-[#1cd8d2]/50 bg-gray-50 dark:bg-gray-900 transition-colors"
+              >
+                <span class="text-xs text-gray-400 dark:text-gray-500 mb-1.5">Next →</span>
+                <span class="text-sm font-medium text-gray-800 dark:text-gray-200 group-hover:text-[#1cd8d2] transition-colors line-clamp-2">{nextPost.title}</span>
+              </a>
+            ) : <div />}
+          </nav>
+        )}
+
+        <!-- Comments — placeholder values, user must configure Giscus -->
+        <!--
+        <GiscusComments
+          repo="your-username/personal-portfolio"
+          repoId="R_REPLACE_ME"
+          category="Announcements"
+          categoryId="DIC_REPLACE_ME"
+          term={fullPost.slug}
+          client:visible
+        />
+        -->
+
+      </article>
+
+      <!-- ── Desktop TOC sidebar ── -->
+      {tocHeadings.length >= 2 && (
+        <aside class="hidden lg:block">
+          <TableOfContents headings={tocHeadings} />
+        </aside>
+      )}
+
+    </div>
+  </div>
 </BlogLayout>

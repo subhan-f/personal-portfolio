@@ -1,88 +1,113 @@
 ---
-import MainLayout from '@layouts/MainLayout.astro';
+import BlogLayout from '@layouts/BlogLayout.astro';
 import { fetchStrapi, getStrapiMedia } from '@lib/strapi';
+import { calcReadingTime } from '@lib/markdown';
 import type { StrapiList, StrapiArticle } from '@lib/strapi';
 
 export async function getStaticPaths() {
   const { data: posts } = await fetchStrapi<StrapiList<StrapiArticle>>(
     '/articles',
-    { 'populate[cover]': 'true', 'populate[category]': 'true', 'sort': 'publishedAt:desc' }
+    {
+      'populate[cover]': 'true',
+      'populate[category]': 'true',
+      'populate[blocks][populate]': '*',
+      'sort': 'publishedAt:desc',
+    }
   );
 
-  const tagMap = new Map<string, StrapiArticle[]>();
+  const tagMap = new Map<string, { label: string; posts: StrapiArticle[] }>();
   for (const post of posts) {
     const tags = post.tags ?? (post.category ? [post.category.name] : []);
     for (const tag of tags) {
       const key = tag.toLowerCase().replace(/[\s/]+/g, '-');
-      if (!tagMap.has(key)) tagMap.set(key, []);
-      tagMap.get(key)!.push(post);
+      if (!tagMap.has(key)) tagMap.set(key, { label: tag, posts: [] });
+      tagMap.get(key)!.posts.push(post);
     }
   }
 
-  return [...tagMap.entries()].map(([key, tagPosts]) => ({
+  return [...tagMap.entries()].map(([key, { label, posts: tagPosts }]) => ({
     params: { tag: key },
-    props: { tag: tagPosts[0] ? (tagPosts[0].tags?.[0] ?? tagPosts[0].category?.name ?? key) : key, posts: tagPosts },
+    props: { tagLabel: label, tagKey: key, posts: tagPosts },
   }));
 }
 
-const { tag, posts } = Astro.props as { tag: string; posts: StrapiArticle[] };
+const { tagLabel, tagKey, posts } = Astro.props as {
+  tagLabel: string;
+  tagKey: string;
+  posts: StrapiArticle[];
+};
 ---
 
-<MainLayout title={`Posts tagged "${tag}" | Subhan Farrakh`} description={`Blog posts about ${tag}`}>
-  <section class="min-h-screen bg-black text-white py-20 px-4 md:px-8">
-    <div class="max-w-6xl mx-auto">
-      <div class="mb-12">
-        <a href="/blog" class="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-6 transition-colors">
-          ← All Posts
-        </a>
-        <h1 class="text-4xl md:text-5xl font-bold">
-          Posts tagged <span class="bg-gradient-to-r from-[#1cd8d2] to-[#00bf8f] bg-clip-text text-transparent">"{tag}"</span>
-        </h1>
-        <p class="text-gray-400 mt-3">{posts.length} post{posts.length !== 1 ? 's' : ''} found</p>
-      </div>
+<BlogLayout
+  title={`#${tagLabel} — Blog`}
+  description={`${posts.length} article${posts.length === 1 ? '' : 's'} tagged with ${tagLabel}.`}
+>
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 py-16 sm:py-20">
 
-      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {posts.map((post) => {
-          const tags = post.tags ?? (post.category ? [post.category.name] : []);
-          const coverUrl = getStrapiMedia(post.cover?.url);
-          return (
-            <a
-              href={`/blog/${post.slug}`}
-              class="group block bg-white/5 rounded-2xl border border-white/10 overflow-hidden hover:border-[#1cd8d2]/50 transition-all duration-300 hover:-translate-y-1"
-            >
-              {coverUrl && (
-                <div class="aspect-video overflow-hidden">
-                  <img
-                    src={coverUrl}
-                    alt={post.cover?.alternativeText ?? post.title}
-                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    loading="lazy"
-                  />
-                </div>
-              )}
-              <div class="p-6">
-                <div class="flex flex-wrap gap-2 mb-3">
-                  {tags.slice(0, 3).map((t) => (
+    <!-- Header -->
+    <div class="mb-10">
+      <a href="/blog" class="inline-flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white mb-6 transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        All posts
+      </a>
+      <div class="flex items-center gap-3 mb-2">
+        <span class="px-3 py-1 rounded-full text-sm font-semibold bg-gray-900 dark:bg-white text-white dark:text-gray-900">
+          #{tagLabel}
+        </span>
+      </div>
+      <p class="text-gray-500 dark:text-gray-400 text-sm">
+        {posts.length} {posts.length === 1 ? 'post' : 'posts'}
+      </p>
+    </div>
+
+    <!-- Grid -->
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {posts.map((post) => {
+        const tags = post.tags ?? (post.category ? [post.category.name] : []);
+        const coverUrl = getStrapiMedia(post.cover?.url);
+        const readingTime = calcReadingTime(post.blocks);
+        return (
+          <a
+            href={`/blog/${post.slug}`}
+            class="group flex flex-col rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 overflow-hidden hover:border-[#1cd8d2]/60 hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5"
+          >
+            {coverUrl ? (
+              <div class="aspect-video overflow-hidden bg-gray-100 dark:bg-gray-800">
+                <img src={coverUrl} alt={post.cover?.alternativeText ?? post.title} class="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-500" loading="lazy" />
+              </div>
+            ) : (
+              <div class="aspect-video bg-linear-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 flex items-center justify-center">
+                <span class="text-3xl font-bold text-gray-300 dark:text-gray-600">{post.title.charAt(0)}</span>
+              </div>
+            )}
+            <div class="flex flex-col flex-1 p-5">
+              {tags.length > 0 && (
+                <div class="flex flex-wrap gap-1.5 mb-3">
+                  {tags.slice(0, 3).map((tag: string) => (
                     <span class:list={[
-                      "text-xs px-2 py-1 rounded-full",
-                      t === tag ? "bg-[#1cd8d2]/20 text-[#1cd8d2]" : "bg-white/10 text-gray-300"
+                      'text-xs px-2 py-0.5 rounded-full font-medium',
+                      tag.toLowerCase().replace(/[\s/]+/g, '-') === tagKey
+                        ? 'bg-[#1cd8d2]/15 text-[#1cd8d2]'
+                        : 'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400',
                     ]}>
-                      {t}
+                      {tag}
                     </span>
                   ))}
                 </div>
-                <h2 class="text-xl font-bold mb-2 group-hover:text-[#1cd8d2] transition-colors">{post.title}</h2>
-                <p class="text-gray-400 text-sm mb-4 line-clamp-2">{post.description}</p>
-                <time class="text-xs text-gray-500" datetime={post.publishedAt}>
-                  {new Date(post.publishedAt).toLocaleDateString('en-US', {
-                    year: 'numeric', month: 'long', day: 'numeric',
-                  })}
+              )}
+              <h2 class="text-base font-semibold text-gray-900 dark:text-white mb-2 leading-snug group-hover:text-[#1cd8d2] transition-colors line-clamp-2">{post.title}</h2>
+              <p class="text-sm text-gray-500 dark:text-gray-400 line-clamp-2 mb-4 flex-1">{post.description}</p>
+              <div class="flex items-center justify-between text-xs text-gray-400 dark:text-gray-500">
+                <time datetime={post.publishedAt}>
+                  {new Date(post.publishedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
                 </time>
+                <span>{readingTime} min read</span>
               </div>
-            </a>
-          );
-        })}
-      </div>
+            </div>
+          </a>
+        );
+      })}
     </div>
-  </section>
-</MainLayout>
+
+  </div>
+</BlogLayout>

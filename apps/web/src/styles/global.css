@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Class-based dark mode — only blog pages set class="dark" on <html> */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --font-sans: "Poppins", sans-serif;
   --font-display: "Roboto", sans-serif;
@@ -19,60 +22,163 @@ h1, h2, h3, h4 {
   font-family: var(--font-display);
 }
 
-/* Blog prose styles */
+/* Blog prose styles — theme-aware */
 .prose {
-  color: #d1d5db;
+  color: #374151;
   line-height: 1.8;
+  font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+
+  @variant dark {
+    color: #d1d5db;
+  }
 }
 .prose h1, .prose h2, .prose h3, .prose h4 {
-  color: #fff;
+  color: #111827;
   font-weight: 700;
   margin-top: 2em;
   margin-bottom: 0.5em;
+
+  @variant dark {
+    color: #fff;
+  }
 }
 .prose h1 { font-size: 2.25rem; }
 .prose h2 { font-size: 1.875rem; }
 .prose h3 { font-size: 1.5rem; }
 .prose p { margin-bottom: 1.25em; }
 .prose a {
-  color: #1cd8d2;
+  color: #0d9488;
   text-decoration: underline;
   text-underline-offset: 3px;
+
+  @variant dark {
+    color: #1cd8d2;
+  }
 }
-.prose a:hover { color: #00bf8f; }
-.prose strong { color: #fff; }
+.prose a:hover { color: #0f766e; }
+.prose strong {
+  color: #111827;
+
+  @variant dark {
+    color: #fff;
+  }
+}
 .prose ul, .prose ol {
   padding-left: 1.5em;
   margin-bottom: 1.25em;
 }
 .prose li { margin-bottom: 0.5em; }
 .prose code {
-  background: rgba(255,255,255,0.1);
+  background: #f3f4f6;
+  color: #111827;
   padding: 0.15em 0.4em;
   border-radius: 0.25rem;
   font-size: 0.875em;
+  font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, monospace;
+
+  @variant dark {
+    background: rgba(255,255,255,0.1);
+    color: #e5e7eb;
+  }
 }
 .prose pre {
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 0.5rem;
-  padding: 1em;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.25em;
   overflow-x: auto;
   margin-bottom: 1.25em;
+
+  @variant dark {
+    background: rgba(255,255,255,0.05);
+    border-color: rgba(255,255,255,0.1);
+  }
 }
 .prose pre code {
   background: transparent;
   padding: 0;
+  color: inherit;
 }
 .prose blockquote {
   border-left: 3px solid #1cd8d2;
-  padding-left: 1em;
+  padding-left: 1.25em;
   margin-left: 0;
   margin-bottom: 1.25em;
-  color: #9ca3af;
+  color: #6b7280;
   font-style: italic;
+
+  @variant dark {
+    color: #9ca3af;
+  }
 }
 .prose img {
   border-radius: 0.75rem;
   margin: 1.5em 0;
+}
+.prose hr {
+  border-color: #e5e7eb;
+  margin: 2em 0;
+
+  @variant dark {
+    border-color: rgba(255,255,255,0.1);
+  }
+}
+
+/* ─── Shiki syntax highlighting (dual-theme light/dark) ──────────────────── */
+
+/* Shiki sets inline color for light theme; override with dark vars in dark mode */
+@variant dark {
+  .shiki span { color: var(--shiki-dark) !important; }
+  .shiki { background-color: var(--shiki-dark-bg) !important; }
+}
+
+/* Code block wrapper — Shiki owns the pre styles, not .prose */
+.code-block pre {
+  margin: 0;
+  border-radius: 0.75rem;
+  padding: 1.25em;
+  overflow-x: auto;
+  font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, monospace;
+  font-size: 0.875em;
+  line-height: 1.7;
+}
+
+/* Copy button — visible on hover of .group wrapper */
+.copy-btn {
+  position: absolute;
+  top: 0.625rem;
+  right: 0.625rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  font-size: 0.7rem;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid rgba(0,0,0,0.12);
+  background: rgba(255,255,255,0.9);
+  color: #374151;
+  opacity: 0;
+  transition: opacity 0.15s ease, background 0.15s ease;
+}
+
+.copy-btn:hover { background: #fff; }
+
+@variant dark {
+  .copy-btn {
+    background: rgba(30,30,30,0.9);
+    color: #d1d5db;
+    border-color: rgba(255,255,255,0.12);
+  }
+  .copy-btn:hover { background: rgba(50,50,50,0.95); }
+}
+
+.group:hover .copy-btn { opacity: 1; }
+
+/* TOC active link */
+.toc-link[data-active="true"] {
+  color: #1cd8d2;
+  font-weight: 500;
 }

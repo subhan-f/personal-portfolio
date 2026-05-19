@@ -29,6 +29,11 @@ export default defineConfig({
   ],
   vite: {
     plugins: [tailwindcss()],
+    server: {
+      fs: {
+        strict: false,
+      },
+    },
   },
   server: {
     headers: {
