@@ -1,16 +1,14 @@
-import { motion, AnimatePresence } from "framer-motion";
-import { FiX } from "react-icons/fi";
-import { useIsMobile } from "@hooks/useIsMobile";
-import { useEffect, useRef, useCallback } from "react";
+import { motion, AnimatePresence } from 'framer-motion';
+import { FiX } from 'react-icons/fi';
+import { useIsMobile } from '@hooks/useIsMobile';
+import { useEffect, useRef, useCallback } from 'react';
 
 const menuItems = [
-  { label: "Home", path: "/", external: false },
-  { label: "About", path: "/about", external: false },
-  { label: "Projects", path: "/projects", external: false },
-  { label: "Experience", path: "/experience", external: false },
-  { label: "Testimonials", path: "/testimonials", external: false },
-  { label: "Blog", path: "https://blog.subhanfarrakh.com", external: true },
-  { label: "Contact", path: "/contact", external: false },
+  { label: 'Home', path: '/', external: false },
+  { label: 'Projects', path: '/projects', external: false },
+  { label: 'Blog', path: 'https://blog.subhanfarrakh.com', external: true },
+  { label: 'About', path: '/about', external: false },
+  { label: 'Contact', path: '/contact', external: false },
 ];
 
 interface OverlayMenuProps {
@@ -19,18 +17,18 @@ interface OverlayMenuProps {
 }
 
 export const OverlayMenu = ({ isOpen, onClose }: OverlayMenuProps) => {
-  const isMobile = useIsMobile("(max-width: 1023px)");
-  const origin = isMobile ? "95% 8%" : "50% 8%";
+  const isMobile = useIsMobile('(max-width: 1023px)');
+  const origin = isMobile ? '95% 8%' : '50% 8%';
   const overlayRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
+      if (e.key === 'Escape') {
         onClose();
         return;
       }
-      if (e.key !== "Tab") return;
+      if (e.key !== 'Tab') return;
 
       const overlay = overlayRef.current;
       if (!overlay) return;
@@ -55,23 +53,23 @@ export const OverlayMenu = ({ isOpen, onClose }: OverlayMenuProps) => {
 
   useEffect(() => {
     if (isOpen) {
-      document.addEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = "hidden";
+      document.addEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'hidden';
       // Hide main content from assistive technology when menu is open
-      const mainContent = document.getElementById("main-content");
-      if (mainContent) mainContent.setAttribute("aria-hidden", "true");
+      const mainContent = document.getElementById('main-content');
+      if (mainContent) mainContent.setAttribute('aria-hidden', 'true');
       // Focus the close button when menu opens
       setTimeout(() => closeButtonRef.current?.focus(), 100);
     } else {
-      document.body.style.overflow = "";
-      const mainContent = document.getElementById("main-content");
-      if (mainContent) mainContent.removeAttribute("aria-hidden");
+      document.body.style.overflow = '';
+      const mainContent = document.getElementById('main-content');
+      if (mainContent) mainContent.removeAttribute('aria-hidden');
     }
     return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = "";
-      const mainContent = document.getElementById("main-content");
-      if (mainContent) mainContent.removeAttribute("aria-hidden");
+      document.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = '';
+      const mainContent = document.getElementById('main-content');
+      if (mainContent) mainContent.removeAttribute('aria-hidden');
     };
   }, [isOpen, handleKeyDown]);
 
@@ -88,7 +86,7 @@ export const OverlayMenu = ({ isOpen, onClose }: OverlayMenuProps) => {
           animate={{ clipPath: `circle(150% at ${origin})` }}
           exit={{ clipPath: `circle(0% at ${origin})` }}
           transition={{ duration: 0.7, ease: [0.4, 0, 0.2, 1] }}
-          style={{ backgroundColor: "rgba(0,0,0,0.95)" }}
+          style={{ backgroundColor: 'rgba(0,0,0,0.95)' }}
         >
           <button
             ref={closeButtonRef}
@@ -109,7 +107,7 @@ export const OverlayMenu = ({ isOpen, onClose }: OverlayMenuProps) => {
                 <a
                   href={item.path}
                   onClick={onClose}
-                  {...(item.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                  {...(item.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
                   className="text-4xl text-white font-semibold hover:text-pink-400 transition-colors duration-300"
                 >
                   {item.label}
