@@ -2,14 +2,12 @@
 import { defineConfig } from "astro/config";
 import react from "@astrojs/react";
 import tailwindcss from "@tailwindcss/vite";
-import mdx from "@astrojs/mdx";
 import sitemap, { ChangeFreqEnum } from "@astrojs/sitemap";
 
 export default defineConfig({
   site: "https://subhanfarrakh.com",
   integrations: [
     react(),
-    mdx(),
     sitemap({
       serialize(item) {
         if (item.url === "https://subhanfarrakh.com/") {

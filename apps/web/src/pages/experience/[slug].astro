@@ -4,18 +4,16 @@ import { fetchStrapi } from '@lib/strapi';
 import type { StrapiList, StrapiExperience } from '@lib/strapi';
 
 export async function getStaticPaths() {
-  const { data: experiences } = await fetchStrapi<StrapiList<StrapiExperience>>(
-    '/experiences',
-    { 'sort': 'publishedAt:desc' }
-  );
+  const { data: experiences } = await fetchStrapi<StrapiList<StrapiExperience>>('/experiences', {
+    sort: 'publishedAt:desc',
+  });
   return experiences.map((e) => ({ params: { slug: e.slug } }));
 }
 
 const { slug } = Astro.params;
-const { data: results } = await fetchStrapi<StrapiList<StrapiExperience>>(
-  '/experiences',
-  { 'filters[slug][$eq]': slug }
-);
+const { data: results } = await fetchStrapi<StrapiList<StrapiExperience>>('/experiences', {
+  'filters[slug][$eq]': slug,
+});
 const experience = results[0];
 
 if (!experience) return Astro.redirect('/experience');
@@ -37,12 +35,18 @@ const schema = {
 };
 ---
 
-<MainLayout title={`${experience.role} at ${experience.company} | Subhan Farrakh`} description={experience.shortDescription}>
+<MainLayout
+  title={`${experience.role} at ${experience.company} | Subhan Farrakh`}
+  description={experience.shortDescription}
+>
   <section class="min-h-screen bg-black text-white py-20 px-4 md:px-8">
     <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
 
     <div class="max-w-4xl mx-auto">
-      <a href="/experience" class="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-8 transition-colors">
+      <a
+        href="/experience"
+        class="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-8 transition-colors"
+      >
         ← Back to Experience
       </a>
 
@@ -50,12 +54,14 @@ const schema = {
         <h1 class="text-4xl md:text-5xl font-bold mb-3">{experience.role}</h1>
         <div class="flex flex-wrap items-center gap-3 text-xl text-gray-300 mb-4">
           <span class="font-semibold">{experience.company}</span>
-          {experience.location && (
-            <>
-              <span class="text-gray-500">•</span>
-              <span>{experience.location}</span>
-            </>
-          )}
+          {
+            experience.location && (
+              <>
+                <span class="text-gray-500">•</span>
+                <span>{experience.location}</span>
+              </>
+            )
+          }
         </div>
         <div class="flex items-center gap-2 text-gray-400">
           <span>{experience.duration}</span>
@@ -69,25 +75,33 @@ const schema = {
       <div class="bg-white/5 p-6 md:p-8 rounded-xl border border-white/10 mb-10">
         <h2 class="text-2xl font-bold mb-6">Key Achievements</h2>
         <ul class="space-y-3">
-          {(experience.achievements ?? []).map((achievement) => (
-            <li class="flex items-start gap-3">
-              <span class="text-[#1cd8d2] mt-1">▹</span>
-              <span class="text-gray-300">{achievement}</span>
-            </li>
-          ))}
+          {
+            (experience.achievements ?? []).map((achievement) => (
+              <li class="flex items-start gap-3">
+                <span class="text-[#1cd8d2] mt-1">▹</span>
+                <span class="text-gray-300">{achievement}</span>
+              </li>
+            ))
+          }
         </ul>
       </div>
 
       <div class="bg-white/5 p-6 md:p-8 rounded-xl border border-white/10 mb-10">
         <h2 class="text-2xl font-bold mb-6">Technologies & Tools</h2>
         <div class="flex flex-wrap gap-3">
-          {(experience.technologies ?? []).map((tech) => (
-            <span class="px-4 py-2 bg-white/10 rounded-lg text-gray-200 border border-white/5">{tech}</span>
-          ))}
+          {
+            (experience.technologies ?? []).map((tech) => (
+              <span class="px-4 py-2 bg-white/10 rounded-lg text-gray-200 border border-white/5">
+                {tech}
+              </span>
+            ))
+          }
         </div>
       </div>
 
-      <div class="text-center p-8 bg-gradient-to-r from-[#302b63]/20 via-[#00bf8f]/20 to-[#1cd8d2]/20 rounded-2xl border border-white/10">
+      <div
+        class="text-center p-8 bg-linear-to-r from-[#302b63]/20 via-[#00bf8f]/20 to-[#1cd8d2]/20 rounded-2xl border border-white/10"
+      >
         <h3 class="text-xl font-semibold mb-4">Interested in similar results for your business?</h3>
         <a
           href="/contact"

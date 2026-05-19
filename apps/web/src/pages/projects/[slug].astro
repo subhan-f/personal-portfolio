@@ -4,18 +4,18 @@ import { fetchStrapi, getStrapiMedia } from '@lib/strapi';
 import type { StrapiList, StrapiProject } from '@lib/strapi';
 
 export async function getStaticPaths() {
-  const { data: projects } = await fetchStrapi<StrapiList<StrapiProject>>(
-    '/projects',
-    { 'sort': 'publishedAt:desc' }
-  );
+  const { data: projects } = await fetchStrapi<StrapiList<StrapiProject>>('/projects', {
+    sort: 'publishedAt:desc',
+  });
   return projects.map((p) => ({ params: { slug: p.slug } }));
 }
 
 const { slug } = Astro.params;
-const { data: results } = await fetchStrapi<StrapiList<StrapiProject>>(
-  '/projects',
-  { 'filters[slug][$eq]': slug, 'populate[image]': 'true', 'populate[gallery]': 'true' }
-);
+const { data: results } = await fetchStrapi<StrapiList<StrapiProject>>('/projects', {
+  'filters[slug][$eq]': slug,
+  'populate[image]': 'true',
+  'populate[gallery]': 'true',
+});
 const project = results[0];
 
 if (!project) return Astro.redirect('/projects');
@@ -32,27 +32,44 @@ const schema = {
   applicationCategory: 'BusinessApplication',
   operatingSystem: 'Web',
   datePublished: project.year,
-  creator: { '@type': 'Person', name: 'Subhan Farrakh', sameAs: 'https://subhanfarrakh.com/#person' },
+  creator: {
+    '@type': 'Person',
+    name: 'Subhan Farrakh',
+    sameAs: 'https://subhanfarrakh.com/#person',
+  },
   offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
 };
 ---
 
-<MainLayout title={`${project.title} | Case Study by Subhan Farrakh`} description={project.shortDescription}>
+<MainLayout
+  title={`${project.title} | Case Study by Subhan Farrakh`}
+  description={project.shortDescription}
+>
   <section class="min-h-screen bg-black text-white py-20 px-4 md:px-8">
     <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
 
     <div class="max-w-4xl mx-auto">
-      <a href="/projects" aria-label="Back to all projects" class="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-8 transition-colors">
+      <a
+        href="/projects"
+        aria-label="Back to all projects"
+        class="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-8 transition-colors"
+      >
         ← Back to Projects
       </a>
 
       <div class="relative h-64 md:h-96 rounded-2xl overflow-hidden mb-8">
-        {imageUrl ? (
-          <img src={imageUrl} alt={project.image?.alternativeText ?? project.title} class="w-full h-full object-cover" />
-        ) : (
-          <div class="w-full h-full" style={`background-color: ${project.bgColor}`} />
-        )}
-        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+        {
+          imageUrl ? (
+            <img
+              src={imageUrl}
+              alt={project.image?.alternativeText ?? project.title}
+              class="w-full h-full object-cover"
+            />
+          ) : (
+            <div class="w-full h-full" style={`background-color: ${project.bgColor}`} />
+          )
+        }
+        <div class="absolute inset-0 bg-linear-to-t from-black/60 to-transparent"></div>
         <div class="absolute bottom-6 left-6">
           <h1 class="text-4xl md:text-5xl font-bold">{project.title}</h1>
         </div>
@@ -71,12 +88,14 @@ const schema = {
           <p class="text-xs text-gray-400">Tech Stack</p>
           <p class="font-semibold">{(project.technologies ?? []).length} tools</p>
         </div>
-        {project.client && (
-          <div class="bg-white/5 p-4 rounded-xl border border-white/10">
-            <p class="text-xs text-gray-400">Client</p>
-            <p class="font-semibold">{project.client}</p>
-          </div>
-        )}
+        {
+          project.client && (
+            <div class="bg-white/5 p-4 rounded-xl border border-white/10">
+              <p class="text-xs text-gray-400">Client</p>
+              <p class="font-semibold">{project.client}</p>
+            </div>
+          )
+        }
       </div>
 
       <div class="prose max-w-none mb-10">
@@ -87,47 +106,55 @@ const schema = {
         <div class="bg-white/5 p-6 rounded-xl border border-white/10">
           <h2 class="text-xl font-bold mb-4">✨ Key Features</h2>
           <ul class="space-y-2">
-            {(project.features ?? []).map((feature) => (
-              <li class="flex items-start gap-2">
-                <span class="text-[#1cd8d2] mt-1">•</span>
-                <span class="text-gray-300">{feature}</span>
-              </li>
-            ))}
+            {
+              (project.features ?? []).map((feature) => (
+                <li class="flex items-start gap-2">
+                  <span class="text-[#1cd8d2] mt-1">•</span>
+                  <span class="text-gray-300">{feature}</span>
+                </li>
+              ))
+            }
           </ul>
         </div>
 
         <div class="bg-white/5 p-6 rounded-xl border border-white/10">
           <h2 class="text-xl font-bold mb-4">🧩 Challenges & Solutions</h2>
-          {project.challenges && (
-            <div class="mb-4">
-              <p class="text-sm text-gray-400 mb-1">Challenge</p>
-              <p class="text-gray-300">{project.challenges}</p>
-            </div>
-          )}
-          {project.solution && (
-            <div>
-              <p class="text-sm text-gray-400 mb-1">Solution</p>
-              <p class="text-gray-300">{project.solution}</p>
-            </div>
-          )}
+          {
+            project.challenges && (
+              <div class="mb-4">
+                <p class="text-sm text-gray-400 mb-1">Challenge</p>
+                <p class="text-gray-300">{project.challenges}</p>
+              </div>
+            )
+          }
+          {
+            project.solution && (
+              <div>
+                <p class="text-sm text-gray-400 mb-1">Solution</p>
+                <p class="text-gray-300">{project.solution}</p>
+              </div>
+            )
+          }
         </div>
       </div>
 
-      <div class="bg-gradient-to-r from-[#302b63]/20 via-[#00bf8f]/20 to-[#1cd8d2]/20 p-8 rounded-2xl border border-white/10 text-center">
-        {project.outcome && (
-          <p class="text-xl font-semibold mb-4">📈 {project.outcome}</p>
-        )}
+      <div
+        class="bg-linear-to-r from-[#302b63]/20 via-[#00bf8f]/20 to-[#1cd8d2]/20 p-8 rounded-2xl border border-white/10 text-center"
+      >
+        {project.outcome && <p class="text-xl font-semibold mb-4">📈 {project.outcome}</p>}
         <div class="flex flex-wrap justify-center gap-4">
-          {project.link && (
-            <a
-              href={project.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="inline-flex items-center gap-2 px-6 py-3 bg-white text-black rounded-lg font-semibold hover:bg-gray-200 transition-colors"
-            >
-              Visit Live Project
-            </a>
-          )}
+          {
+            project.link && (
+              <a
+                href={project.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-2 px-6 py-3 bg-white text-black rounded-lg font-semibold hover:bg-gray-200 transition-colors"
+              >
+                Visit Live Project
+              </a>
+            )
+          }
           <a
             href="/contact"
             class="inline-flex items-center gap-2 px-6 py-3 bg-white/10 text-white rounded-lg font-semibold border border-white/20 hover:bg-white/20 transition-colors"
