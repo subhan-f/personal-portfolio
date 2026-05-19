@@ -10,9 +10,17 @@ export default defineConfig({
     react(),
     sitemap({
       serialize(item) {
-        if (item.url === "https://subhanfarrakh.com/") {
+        const url = item.url;
+        item.lastmod = new Date().toISOString().split('T')[0];
+        if (url === "https://subhanfarrakh.com/") {
           item.priority = 1.0;
           item.changefreq = ChangeFreqEnum.MONTHLY;
+        } else if (url.includes('/projects/') || url.includes('/experience/')) {
+          item.priority = 0.8;
+          item.changefreq = ChangeFreqEnum.MONTHLY;
+        } else if (/\/(faq|skills)/.test(url)) {
+          item.priority = 0.4;
+          item.changefreq = ChangeFreqEnum.YEARLY;
         } else {
           item.priority = 0.6;
           item.changefreq = ChangeFreqEnum.MONTHLY;

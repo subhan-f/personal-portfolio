@@ -60,15 +60,36 @@ const headings = extractHeadings(allMd);
 // Schema.org
 const schema = {
   '@context': 'https://schema.org',
-  '@type': 'BlogPosting',
-  headline: post.title,
-  description: post.description,
-  datePublished: pubDate.toISOString(),
-  ...(updatedDate && { dateModified: updatedDate.toISOString() }),
-  author: { '@type': 'Person', name: author },
-  ...(post.cover?.url && { image: getStrapiMedia(post.cover.url) }),
-  keywords: tags.join(', '),
-  mainEntityOfPage: { '@type': 'WebPage', '@id': postUrl },
+  '@graph': [
+    {
+      '@type': 'BlogPosting',
+      headline: post.title,
+      description: post.description,
+      datePublished: pubDate.toISOString(),
+      ...(updatedDate && { dateModified: updatedDate.toISOString() }),
+      author: {
+        '@type': 'Person',
+        name: author,
+        url: 'https://subhanfarrakh.com',
+        image: 'https://res.cloudinary.com/dkcdwyrjl/image/upload/q_auto/f_auto/v1775601091/Subhan_Farrakh_photo.png',
+        sameAs: [
+          'https://linkedin.com/in/subhanf',
+          'https://github.com/subhan-f',
+          'https://x.com/SubhanFarrakh',
+        ],
+      },
+      ...(post.cover?.url && { image: getStrapiMedia(post.cover.url) }),
+      keywords: tags.join(', '),
+      mainEntityOfPage: { '@type': 'WebPage', '@id': postUrl },
+    },
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Blog', item: 'https://blog.subhanfarrakh.com' },
+        { '@type': 'ListItem', position: 2, name: post.title, item: postUrl },
+      ],
+    },
+  ],
 };
 ---
 

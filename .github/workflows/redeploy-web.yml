@@ -20,3 +20,22 @@ jobs:
         env:
           VERCEL_DEPLOY_HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
         run: curl -X POST "$VERCEL_DEPLOY_HOOK"
+
+      - name: Submit to IndexNow
+        env:
+          INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
+        run: |
+          curl -s -X POST "https://api.indexnow.org/indexnow" \
+            -H "Content-Type: application/json; charset=utf-8" \
+            -d "{
+              \"host\": \"subhanfarrakh.com\",
+              \"key\": \"$INDEXNOW_KEY\",
+              \"keyLocation\": \"https://subhanfarrakh.com/$INDEXNOW_KEY.txt\",
+              \"urlList\": [
+                \"https://subhanfarrakh.com/\",
+                \"https://subhanfarrakh.com/projects\",
+                \"https://subhanfarrakh.com/experience\",
+                \"https://subhanfarrakh.com/about\",
+                \"https://subhanfarrakh.com/contact\"
+              ]
+            }"

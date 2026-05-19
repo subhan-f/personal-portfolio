@@ -33,6 +33,16 @@ const schema = {
     '@id': `https://subhanfarrakh.com/experience/${experience.slug}`,
   },
 };
+
+const breadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://subhanfarrakh.com' },
+    { '@type': 'ListItem', position: 2, name: 'Experience', item: 'https://subhanfarrakh.com/experience' },
+    { '@type': 'ListItem', position: 3, name: `${experience.role} at ${experience.company}`, item: `https://subhanfarrakh.com/experience/${experience.slug}` },
+  ],
+};
 ---
 
 <MainLayout
@@ -41,6 +51,7 @@ const schema = {
 >
   <section class="min-h-screen bg-black text-white py-20 px-4 md:px-8">
     <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(breadcrumb)} />
 
     <div class="max-w-4xl mx-auto">
       <a

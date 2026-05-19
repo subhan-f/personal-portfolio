@@ -1,0 +1,29 @@
+---
+import BlogLayout from '@layouts/BlogLayout.astro';
+---
+
+<BlogLayout title="Page Not Found" description="The page you're looking for doesn't exist.">
+  <Fragment slot="head">
+    <meta name="robots" content="noindex" />
+  </Fragment>
+
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 py-32 text-center">
+    <p
+      class="text-8xl font-bold mb-4"
+      style="background: linear-gradient(135deg, var(--brand) 0%, var(--brand-alt) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;"
+    >
+      404
+    </p>
+    <h1 class="text-2xl font-semibold mb-3" style="color: var(--text-1);">Page Not Found</h1>
+    <p class="mb-8 text-base" style="color: var(--text-3);">
+      The page you're looking for doesn't exist or has been moved.
+    </p>
+    <a
+      href="/"
+      class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium text-sm transition-opacity hover:opacity-80"
+      style="background: var(--brand); color: var(--bg);"
+    >
+      ← Back to all posts
+    </a>
+  </div>
+</BlogLayout>

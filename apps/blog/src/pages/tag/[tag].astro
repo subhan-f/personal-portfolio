@@ -41,6 +41,9 @@ const { tagLabel, posts } = Astro.props as {
   title={`#${tagLabel} — Blog`}
   description={`${posts.length} article${posts.length === 1 ? '' : 's'} tagged with ${tagLabel}.`}
 >
+  <Fragment slot="head">
+    <meta name="robots" content="noindex, follow" />
+  </Fragment>
   <div class="max-w-5xl mx-auto px-4 sm:px-6 py-16 sm:py-20">
 
     <!-- Header -->
