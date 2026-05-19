@@ -79,7 +79,7 @@ const currentPath = Astro.url.pathname;
     <slot name="head" />
     <ClientRouter />
   </head>
-  <body class="font-sans antialiased bg-black text-white overflow-x-hidden">
+  <body class="font-sans antialiased bg-black text-white overflow-x-clip">
     <CustomCursor client:load />
     <Navbar currentPath={currentPath} client:load />
     <main id="main-content" class="relative gradient text-white min-h-screen">

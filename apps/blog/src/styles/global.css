@@ -49,7 +49,7 @@ body {
   background-color: var(--bg);
   color: var(--text-1);
   font-family: var(--font-sans);
-  overflow-x: hidden;
+  overflow-x: clip;
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
