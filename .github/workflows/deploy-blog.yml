@@ -1,50 +1,20 @@
-name: Deploy Blog → Vercel
+name: Redeploy Blog on CMS Publish
 
 on:
-  push:
-    branches: [main, app/blog]
-    paths:
-      - 'apps/blog/**'
   repository_dispatch:
     types: [cms-published]
 
 concurrency:
-  group: deploy-blog
+  group: redeploy-blog
   cancel-in-progress: true
 
 jobs:
-  deploy:
-    name: Build & deploy blog
+  redeploy:
+    name: Debounce & trigger Vercel
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Wait for burst to settle (1 min debounce)
+        run: sleep 60
 
-      - name: Set up pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 11
-
-      - name: Set up Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'pnpm'
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Build blog
-        run: pnpm --filter blog build
-        env:
-          PUBLIC_STRAPI_URL: ${{ secrets.PUBLIC_STRAPI_URL }}
-          SITE_URL: https://blog.subhanfarrakh.com
-
-      - name: Deploy to Vercel
-        run: |
-          npx vercel deploy apps/blog/dist --prod \
-            --token=${{ secrets.VERCEL_TOKEN }} \
-            --yes \
-            --name=blog-subhanfarrakh
-        env:
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_BLOG_PROJECT_ID }}
+      - name: Trigger Vercel deploy
+        run: curl -X POST "${{ secrets.VERCEL_BLOG_DEPLOY_HOOK }}"
