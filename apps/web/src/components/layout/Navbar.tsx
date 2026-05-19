@@ -34,6 +34,10 @@ export const Navbar = ({ currentPath = "/" }: NavbarProps) => {
     return () => observer.disconnect();
   }, []);
 
+  const isHomePage = currentPath === "/";
+
+  const [scrolled, setScrolled] = useState(false);
+
   useEffect(() => {
     const handleScroll = () => {
       if (forceVisible) {
@@ -41,12 +45,16 @@ export const Navbar = ({ currentPath = "/" }: NavbarProps) => {
         return;
       }
       const currentScrollY = window.scrollY;
+      setScrolled(currentScrollY > 10);
       if (currentScrollY > lastScrollY.current) {
         setVisible(false);
       } else {
         setVisible(true);
-        if (timerId.current) clearTimeout(timerId.current);
-        timerId.current = setTimeout(() => setVisible(false), 3000);
+        // On the home page the hero owns the screen, so auto-hide after inactivity
+        if (isHomePage) {
+          if (timerId.current) clearTimeout(timerId.current);
+          timerId.current = setTimeout(() => setVisible(false), 3000);
+        }
       }
       lastScrollY.current = currentScrollY;
     };
@@ -55,16 +63,14 @@ export const Navbar = ({ currentPath = "/" }: NavbarProps) => {
       window.removeEventListener("scroll", handleScroll);
       if (timerId.current) clearTimeout(timerId.current);
     };
-  }, [forceVisible]);
-
-  const isHomePage = currentPath === "/";
+  }, [forceVisible, isHomePage]);
 
   return (
     <>
       <nav
-        className={`fixed top-0 left-0 w-full flex items-center justify-between px-6 py-4 z-50 transition-transform duration-300 ${
+        className={`fixed top-0 left-0 w-full flex items-center justify-between px-6 py-4 z-50 transition-all duration-300 ${
           visible ? "translate-y-0" : "-translate-y-full"
-        }`}
+        } ${scrolled ? "backdrop-blur-md bg-black/40 border-b border-white/5" : ""}`}
         aria-label="Main navigation"
       >
         <div className="flex items-center space-x-2">

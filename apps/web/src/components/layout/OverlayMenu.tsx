@@ -4,13 +4,13 @@ import { useIsMobile } from "@hooks/useIsMobile";
 import { useEffect, useRef, useCallback } from "react";
 
 const menuItems = [
-  { label: "Home", path: "/" },
-  { label: "About", path: "/about" },
-  { label: "Projects", path: "/projects" },
-  { label: "Experience", path: "/experience" },
-  { label: "Testimonials", path: "/testimonials" },
-  { label: "Blog", path: "https://blog.subhanfarrakh.com" },
-  { label: "Contact", path: "/contact" },
+  { label: "Home", path: "/", external: false },
+  { label: "About", path: "/about", external: false },
+  { label: "Projects", path: "/projects", external: false },
+  { label: "Experience", path: "/experience", external: false },
+  { label: "Testimonials", path: "/testimonials", external: false },
+  { label: "Blog", path: "https://blog.subhanfarrakh.com", external: true },
+  { label: "Contact", path: "/contact", external: false },
 ];
 
 interface OverlayMenuProps {
@@ -109,6 +109,7 @@ export const OverlayMenu = ({ isOpen, onClose }: OverlayMenuProps) => {
                 <a
                   href={item.path}
                   onClick={onClose}
+                  {...(item.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
                   className="text-4xl text-white font-semibold hover:text-pink-400 transition-colors duration-300"
                 >
                   {item.label}
