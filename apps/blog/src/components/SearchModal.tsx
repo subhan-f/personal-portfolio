@@ -48,23 +48,12 @@ export function SearchModal({ posts }: { posts: Post[] }) {
       <button
         onClick={openModal}
         aria-label="Search posts (⌘K)"
-        className="flex items-center gap-2 px-3 py-1.5 text-sm rounded-lg border transition-colors"
-        style={{
-          color: 'var(--text-3)',
-          borderColor: 'var(--border)',
-          background: 'var(--surface)',
-        }}
-        onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.borderColor = 'var(--border)'; (e.currentTarget as HTMLElement).style.color = 'var(--text-2)'; }}
-        onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = 'var(--text-3)'; }}
+        className="flex items-center justify-center w-8 h-8 rounded-lg transition-colors"
+        style={{ color: 'var(--text-3)' }}
+        onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = 'var(--text-1)'; (e.currentTarget as HTMLElement).style.background = 'var(--surface-raised)'; }}
+        onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = 'var(--text-3)'; (e.currentTarget as HTMLElement).style.background = ''; }}
       >
-        <Search size={13} />
-        <span className="hidden sm:inline">Search</span>
-        <kbd
-          className="hidden sm:inline-flex items-center text-[10px] font-mono px-1.5 py-0.5 rounded"
-          style={{ background: 'var(--bg-subtle)', color: 'var(--text-3)' }}
-        >
-          ⌘K
-        </kbd>
+        <Search size={15} />
       </button>
 
       {/* Modal */}
