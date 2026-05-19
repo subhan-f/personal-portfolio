@@ -1,10 +1,9 @@
-# Subhan Farrakh — Portfolio
+# Subhan Farrakh — Personal Portfolio
 
 > AI Automation Engineer · Full-Stack Developer · [subhanfarrakh.com](https://subhanfarrakh.com)
 
-![Portfolio Demo](apps/web/public/demo.gif)
-
 [![Live](https://img.shields.io/badge/Live-subhanfarrakh.com-0d9488?style=flat-square)](https://subhanfarrakh.com)
+[![Blog](https://img.shields.io/badge/Blog-blog.subhanfarrakh.com-6366f1?style=flat-square)](https://blog.subhanfarrakh.com)
 [![Astro](https://img.shields.io/badge/Astro-6-FF5D01?style=flat-square&logo=astro&logoColor=white)](https://astro.build)
 [![React](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=black)](https://react.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-6-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
@@ -12,176 +11,209 @@
 
 ---
 
-## Tech Stack
-
-| Layer      | Technology                        |
-| ---------- | --------------------------------- |
-| Framework  | Astro 6 with View Transitions     |
-| UI         | React 19 (island architecture)    |
-| Styling    | Tailwind CSS v4 (Vite plugin)     |
-| Animation  | Framer Motion 12                  |
-| Content    | MDX + Astro Content Collections   |
-| Validation | Zod 4                             |
-| Icons      | Lucide React, React Icons         |
-| Contact    | EmailJS                           |
-| Media      | Cloudinary (images, OG, favicons) |
-| Analytics  | Vercel Analytics + Speed Insights |
-| Feeds      | RSS + XML Sitemap                 |
-
----
-
-## Features
-
-- **Island architecture** — React components hydrated on demand (`client:load`, `client:visible`) for optimal performance
-- **Animated sections** — Framer Motion 12 transitions with a shared animation library (`src/lib/animations.ts`)
-- **Intro animation** — Full-screen entry sequence on first load
-- **Custom cursor** — Gradient glow cursor on desktop (automatically disabled on touch/tablet devices ≤1023px)
-- **Particles background** — Canvas-based particle system
-- **Scroll timeline** — Scroll-driven progress indicator
-- **WhatsApp float button** — Quick contact shortcut on all pages
-- **Blog** — MDX posts with frontmatter tags, auto-generated tag pages, and RSS feed
-- **SEO** — Canonical URLs, Open Graph, Twitter cards, JSON-LD structured data, XML sitemap
-- **Security headers** — `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy` set in Astro config
-- **Custom 404** — Branded not-found page
-- **Accessible navigation** — Overlay menu with focus management
-
----
-
-## Project Structure
+## Monorepo Structure
 
 ```text
 .
-├── public/
-│   ├── demo.gif
-│   └── robots.txt
-├── src/
-│   ├── components/
-│   │   ├── layout/         # Navbar, Footer, OverlayMenu
-│   │   ├── pages/          # Page-level composite components
-│   │   ├── sections/       # Hero, About, Projects, Experience, Skills,
-│   │   │                   # Testimonials, FAQ, Contact
-│   │   └── shared/         # CustomCursor, IntroAnimation, ParticlesBackground,
-│   │                       # ScrollTimeline, SocialIcons, WhatsAppButton
-│   ├── content/
-│   │   └── blog/           # MDX blog posts
-│   ├── data/
-│   │   ├── experiences.ts
-│   │   ├── myData.ts       # JSON-LD / structured data
-│   │   ├── projects.ts
-│   │   └── testimonials.ts
-│   ├── hooks/
-│   │   ├── useIsMobile.ts
-│   │   └── usePageVisibility.ts
-│   ├── layouts/
-│   │   ├── BlogLayout.astro
-│   │   └── MainLayout.astro
-│   ├── lib/
-│   │   ├── animations.ts   # Shared Framer Motion variants
-│   │   └── utils.ts
-│   ├── pages/
-│   │   ├── index.astro
-│   │   ├── about.astro
-│   │   ├── contact.astro
-│   │   ├── experience/
-│   │   ├── faq.astro
-│   │   ├── projects/
-│   │   ├── skills.astro
-│   │   ├── testimonials.astro
-│   │   ├── blog/
-│   │   ├── rss.xml.ts
-│   │   └── 404.astro
-│   ├── styles/
-│   │   └── global.css
-│   └── content.config.ts
-├── astro.config.mjs
-├── tsconfig.json
-├── package.json
-└── pnpm-lock.yaml
+├── apps/
+│   ├── web/            # Portfolio site — subhanfarrakh.com
+│   ├── blog/           # Blog — blog.subhanfarrakh.com
+│   ├── cms/            # Strapi CMS (content backend)
+│   └── social-worker/  # BullMQ fan-out social publishing service
+├── pnpm-workspace.yaml
+└── .github/
+    └── workflows/
+        └── redeploy-web.yml   # Deploys web on CMS content publish
 ```
 
 ---
 
-## Routes
+## Apps
 
-| Route                | Description                               |
-| -------------------- | ----------------------------------------- |
-| `/`                  | Home — hero, about summary, featured work |
-| `/about`             | Full about page                           |
-| `/projects`          | Project listing                           |
-| `/projects/[slug]`   | Individual project detail                 |
-| `/experience`        | Work history listing                      |
-| `/experience/[slug]` | Individual experience detail              |
-| `/skills`            | Skills overview                           |
-| `/testimonials`      | Client testimonials                       |
-| `/faq`               | Frequently asked questions                |
-| `/contact`           | Contact form (EmailJS)                    |
-| `/blog`              | Blog index                                |
-| `/blog/[slug]`       | Individual blog post                      |
-| `/blog/tag/[tag]`    | Posts filtered by tag                     |
-| `/rss.xml`           | RSS feed                                  |
+### `apps/web` — Portfolio Site
+
+The main portfolio at [subhanfarrakh.com](https://subhanfarrakh.com).
+
+| Layer      | Technology                                          |
+| ---------- | --------------------------------------------------- |
+| Framework  | Astro 6 (SSG + island architecture)                 |
+| UI         | React 19                                            |
+| Styling    | Tailwind CSS v4 (Vite plugin)                       |
+| Animation  | Framer Motion 12                                    |
+| CMS        | Strapi (headless, via REST API)                     |
+| Validation | Zod 4                                               |
+| Media      | Cloudinary                                          |
+| Analytics  | Vercel Analytics + Speed Insights                   |
+| SEO        | JSON-LD structured data, XML sitemap, IndexNow      |
+
+**Routes**
+
+| Route                          | Description                            |
+| ------------------------------ | -------------------------------------- |
+| `/`                            | Home — hero, about, featured work      |
+| `/projects`                    | Project listing (CollectionPage schema)|
+| `/projects/[slug]`             | Project detail with BreadcrumbList     |
+| `/experience`                  | Work history                           |
+| `/experience/[slug]`           | Experience detail with BreadcrumbList  |
+| `/skills`                      | Skills overview                        |
+| `/testimonials`                | Client testimonials (AggregateRating)  |
+| `/faq`                         | Frequently asked questions             |
+| `/contact`                     | Contact form                           |
+| `/services/web-development`    | Service landing page                   |
+| `/services/ai-automation`      | Service landing page                   |
+| `/services/ai-agents`          | Service landing page                   |
+| `/404`                         | Not found (noindex)                    |
+
+---
+
+### `apps/blog` — Blog
+
+Standalone blog at [blog.subhanfarrakh.com](https://blog.subhanfarrakh.com).
+
+| Layer     | Technology                                      |
+| --------- | ----------------------------------------------- |
+| Framework | Astro 6                                         |
+| UI        | React 19                                        |
+| Styling   | Tailwind CSS v4                                 |
+| Content   | Strapi (articles fetched at build time)         |
+| OG Images | Satori + @resvg/resvg-js (generated at build)  |
+| Search    | Fuse.js (client-side)                           |
+| RSS       | @astrojs/rss                                    |
+| Sitemap   | @astrojs/sitemap                                |
+
+**Routes**
+
+| Route          | Description                                 |
+| -------------- | ------------------------------------------- |
+| `/`            | Blog index with search                      |
+| `/[slug]`      | Article (BlogPosting + BreadcrumbList)      |
+| `/tag/[tag]`   | Tag filter (noindex)                        |
+| `/og/[slug].png` | Auto-generated OG image per article      |
+| `/rss.xml`     | RSS feed                                    |
+| `/sitemap-index.xml` | Sitemap                               |
+| `/404`         | Not found (noindex)                         |
+
+---
+
+### `apps/social-worker` — Social Publishing Service
+
+A Node.js microservice that automatically publishes new articles to social platforms after the blog deployment is live.
+
+**Architecture**
+
+```
+Strapi webhook (entry.publish)
+        │
+        ▼
+POST /webhook/strapi
+  └─ parks a fanout job in BullMQ with a 24h delay
+        │
+Vercel webhook (deployment.succeeded)
+        │
+        ▼
+POST /webhook/vercel-deploy
+  └─ promotes all delayed fanout jobs → executes immediately
+        │
+        ▼
+fanout worker
+  └─ HEAD check (blog URL must return 200)
+  └─ enqueues one job per platform
+        │
+        ├─► linkedin worker   → UGC Posts API v2
+        ├─► twitter worker    → API v2 (OAuth 1.0a, hand-rolled)
+        ├─► bluesky worker    → AT Protocol createRecord
+        ├─► reddit worker     → OAuth2 password grant → /api/submit
+        └─► hashnode worker   → GraphQL publishPost (canonical ref)
+```
+
+The two-webhook design prevents race conditions: Strapi fires immediately on publish, but the job only executes once Vercel confirms the deployment succeeded. The 24h delay is a safety net if the Vercel webhook never fires.
+
+**Environment variables** — see `apps/social-worker/.env.example`
+
+---
+
+### `apps/cms` — Strapi CMS
+
+Headless Strapi instance serving content to both `apps/web` and `apps/blog` via REST API. Triggers a GitHub repository dispatch event on content publish, which kicks off the `redeploy-web` workflow.
+
+---
+
+## CI/CD
+
+**`redeploy-web.yml`** — triggered by `repository_dispatch: cms-published`
+
+1. 60-second debounce (absorbs rapid CMS saves)
+2. Triggers Vercel deploy hook for the web app
+3. Submits URLs to IndexNow (Bing, Yandex)
+
+Vercel deploys `apps/web` and `apps/blog` independently as separate projects.
 
 ---
 
 ## Getting Started
 
-**Prerequisites:** Node.js ≥ 18, [pnpm](https://pnpm.io)
+**Prerequisites:** Node.js ≥ 22, [pnpm](https://pnpm.io)
 
 ```bash
-# Install dependencies
+# Install all workspace dependencies
 pnpm install
 
-# Start development server (http://localhost:4321)
-pnpm dev
+# Start the portfolio dev server (http://localhost:4321)
+pnpm --filter web dev
 
-# Build for production
-pnpm build
+# Start the blog dev server (http://localhost:4322)
+pnpm --filter blog dev
 
-# Preview production build locally
-pnpm preview
+# Start the social worker
+pnpm --filter social-worker dev
 ```
 
 ---
 
-## Scripts
+## Scripts (workspace root)
 
-| Command                | Description                                       |
-| ---------------------- | ------------------------------------------------- |
-| `pnpm dev`             | Start local dev server at `http://localhost:4321` |
-| `pnpm build`           | Create production build in `dist/`                |
-| `pnpm preview`         | Preview the production build locally              |
-| `pnpm astro -- --help` | View Astro CLI help                               |
+| Command                          | Description                            |
+| -------------------------------- | -------------------------------------- |
+| `pnpm --filter web dev`          | Portfolio dev server at :4321          |
+| `pnpm --filter blog dev`         | Blog dev server at :4322               |
+| `pnpm --filter web build`        | Production build for portfolio         |
+| `pnpm --filter blog build`       | Production build for blog              |
+| `pnpm --filter social-worker dev`| Social worker with hot reload          |
 
 ---
 
 ## Environment Variables
 
-Create a `.env` file at the project root:
+### `apps/web/.env`
 
 ```env
-PUBLIC_EMAILJS_SERVICE_ID=your_service_id
-PUBLIC_EMAILJS_TEMPLATE_ID=your_template_id
-PUBLIC_EMAILJS_PUBLIC_KEY=your_public_key
+PUBLIC_EMAILJS_SERVICE_ID=
+PUBLIC_EMAILJS_TEMPLATE_ID=
+PUBLIC_EMAILJS_PUBLIC_KEY=
+STRAPI_URL=
+STRAPI_TOKEN=
 ```
 
-> Variables must be prefixed with `PUBLIC_` to be accessible in client-side code. These are consumed by `src/components/sections/Contact.tsx`.
+### `apps/blog/.env`
 
----
+```env
+STRAPI_URL=
+STRAPI_TOKEN=
+```
 
-## Path Aliases
+### `apps/social-worker/.env`
 
-Configured in `tsconfig.json`:
+See `apps/social-worker/.env.example` for the full list including Twitter, LinkedIn, Bluesky, Reddit, Hashnode credentials and BullMQ/Redis config.
 
-| Alias           | Resolves to        |
-| --------------- | ------------------ |
-| `@/*`           | `src/*`            |
-| `@components/*` | `src/components/*` |
-| `@layouts/*`    | `src/layouts/*`    |
-| `@data/*`       | `src/data/*`       |
-| `@lib/*`        | `src/lib/*`        |
-| `@hooks/*`      | `src/hooks/*`      |
+### GitHub Secrets (CI)
+
+| Secret               | Used by                                    |
+| -------------------- | ------------------------------------------ |
+| `VERCEL_DEPLOY_HOOK` | Trigger Vercel redeploy on CMS publish     |
+| `INDEXNOW_KEY`       | Submit URLs to Bing/Yandex after deploy    |
 
 ---
 
 ## License
 
-MIT © [Subhan Farrakh](https://subhanfarrakh.com) — see [LICENSE](LICENSE) for details.
+MIT © [Subhan Farrakh](https://subhanfarrakh.com)
