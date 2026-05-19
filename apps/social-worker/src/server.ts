@@ -64,12 +64,14 @@ export function createServer() {
       publishedAt: entry.publishedAt,
     };
 
+    const delay = config.blog.fanoutDelayMs;
     const job = await fanoutQueue.add(`fanout:${article.slug}`, { article }, {
       jobId: `fanout:${article.slug}`, // deduplicate repeated publishes
+      delay,                           // don't process until the blog deploy is live
     });
+    console.log(`[server] queued fanout job ${job.id} for "${article.slug}" (runs in ${delay / 1000}s)`);
 
-    console.log(`[server] queued fanout job ${job.id} for "${article.slug}"`);
-    return res.json({ queued: true, jobId: job.id });
+    return res.json({ queued: true, jobId: job.id, runsAfterMs: delay });
   });
 
   return app;

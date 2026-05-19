@@ -18,6 +18,11 @@ export const config = {
   },
   blog: {
     baseUrl: optional('BLOG_BASE_URL') || 'https://blog.subhanfarrakh.com',
+    // How long to wait after the Strapi webhook before the fanout job runs.
+    // Gives Vercel time to rebuild and deploy the blog. Default: 7 minutes.
+    fanoutDelayMs: Number(optional('FANOUT_DELAY_MS') || 7 * 60 * 1000),
+    // How many times to retry the liveness check before giving up. Default: 10.
+    livenessRetries: Number(optional('LIVENESS_RETRIES') || 10),
   },
 
   // Per-platform credentials — only loaded when the worker for that platform starts
