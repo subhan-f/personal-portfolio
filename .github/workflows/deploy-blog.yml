@@ -17,4 +17,6 @@ jobs:
         run: sleep 60
 
       - name: Trigger Vercel deploy
-        run: curl -X POST "${{ secrets.VERCEL_BLOG_DEPLOY_HOOK }}"
+        env:
+          VERCEL_BLOG_DEPLOY_HOOK: ${{ secrets.VERCEL_BLOG_DEPLOY_HOOK }}
+        run: curl -X POST "$VERCEL_BLOG_DEPLOY_HOOK"
