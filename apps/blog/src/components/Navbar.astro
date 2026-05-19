@@ -1,0 +1,127 @@
+---
+import { ThemeToggle } from './ThemeToggle';
+import { SearchModal } from './SearchModal';
+import { fetchStrapi } from '@lib/strapi';
+import type { StrapiList, StrapiArticle } from '@lib/strapi';
+import { getArticleTags } from '@lib/strapi';
+
+const { data: posts } = await fetchStrapi<StrapiList<StrapiArticle>>(
+  '/articles',
+  { 'sort': 'publishedAt:desc' }
+);
+
+const searchPosts = posts.map((p) => ({
+  title: p.title,
+  description: p.description ?? '',
+  slug: p.slug,
+  tags: getArticleTags(p),
+}));
+---
+
+<!-- Floating dock header -->
+<div class="navbar-wrap">
+  <header class="navbar-dock glass">
+
+    <!-- Logo -->
+    <a href="/" class="dock-logo" aria-label="Blog home">
+      SF<span class="dot">.</span>
+    </a>
+
+    <!-- Divider -->
+    <div class="dock-divider" aria-hidden="true" />
+
+    <!-- Nav links -->
+    <nav class="dock-nav" aria-label="Main navigation">
+      <a href="/" class="dock-link">Writing</a>
+      <a href="/" class="dock-link">About</a>
+    </nav>
+
+    <!-- Divider -->
+    <div class="dock-divider" aria-hidden="true" />
+
+    <!-- Right actions -->
+    <div class="dock-actions">
+      <SearchModal posts={searchPosts} client:load />
+      <ThemeToggle client:only="react" />
+    </div>
+
+  </header>
+</div>
+
+<style>
+  .navbar-wrap {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    padding: 1rem 1rem 0;
+    pointer-events: none;
+  }
+
+  .navbar-dock {
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    gap: 0;
+    height: 46px;
+    padding: 0 6px;
+    border-radius: 14px;
+    border: 1px solid var(--border-subtle);
+    box-shadow:
+      0 1px 2px var(--shadow-color),
+      0 4px 16px var(--shadow-color);
+  }
+
+  .dock-logo {
+    padding: 0 14px;
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    color: var(--text-1);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  .dock-logo:hover { color: var(--brand); }
+  .dot { color: var(--brand); }
+
+  .dock-divider {
+    width: 1px;
+    height: 20px;
+    background: var(--border-subtle);
+    margin: 0 2px;
+    flex-shrink: 0;
+  }
+
+  .dock-nav {
+    display: flex;
+    align-items: center;
+  }
+
+  .dock-link {
+    padding: 0 12px;
+    height: 46px;
+    display: flex;
+    align-items: center;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-3);
+    text-decoration: none;
+    border-radius: 10px;
+    transition: color 0.15s, background 0.15s;
+  }
+  .dock-link:hover {
+    color: var(--text-1);
+    background: oklch(from var(--surface-raised) l c h / 0.6);
+  }
+
+  .dock-actions {
+    display: flex;
+    align-items: center;
+    padding: 0 4px;
+    gap: 2px;
+  }
+
+</style>

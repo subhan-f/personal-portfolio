@@ -1,0 +1,33 @@
+---
+type Variant = 'info' | 'warning' | 'danger' | 'success';
+
+interface Props {
+  variant?: Variant;
+  title?: string;
+}
+
+const { variant = 'info', title } = Astro.props;
+
+const config: Record<Variant, { icon: string; label: string; borderColor: string; bg: string; textColor: string }> = {
+  info:    { icon: '💡', label: 'Note',    borderColor: 'oklch(0.790 0.137 193.8)', bg: 'oklch(0.790 0.137 193.8 / 0.07)', textColor: 'oklch(0.550 0.100 193.8)' },
+  warning: { icon: '⚠️', label: 'Warning', borderColor: 'oklch(0.78 0.16 75)',  bg: 'oklch(0.78 0.16 75 / 0.07)',  textColor: 'oklch(0.58 0.13 75)' },
+  danger:  { icon: '🚨', label: 'Danger',  borderColor: 'oklch(0.65 0.22 25)',  bg: 'oklch(0.65 0.22 25 / 0.07)',  textColor: 'oklch(0.55 0.19 25)' },
+  success: { icon: '✅', label: 'Tip',     borderColor: 'oklch(0.72 0.17 145)', bg: 'oklch(0.72 0.17 145 / 0.07)', textColor: 'oklch(0.52 0.14 145)' },
+};
+
+const c = config[variant];
+const label = title ?? c.label;
+---
+
+<div
+  class="callout not-prose my-6 rounded-xl px-5 py-4"
+  style={`border-left: 3px solid ${c.borderColor}; background: ${c.bg};`}
+>
+  <p class="flex items-center gap-2 text-sm font-semibold mb-2" style={`color: ${c.textColor};`}>
+    <span aria-hidden="true">{c.icon}</span>
+    {label}
+  </p>
+  <div class="text-sm prose-sm" style="color: var(--text-2);">
+    <slot />
+  </div>
+</div>

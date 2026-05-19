@@ -1,0 +1,110 @@
+---
+import type { StrapiBlock, StrapiMedia } from '@lib/strapi';
+import { getStrapiMedia } from '@lib/strapi';
+import { renderMarkdown } from '@lib/markdown';
+
+const { blocks = [] } = Astro.props as { blocks: StrapiBlock[] };
+
+// Render all rich-text blocks in parallel
+const rendered = await Promise.all(
+  blocks.map(async (block) => {
+    if (block.__component === 'shared.rich-text') {
+      return { type: 'html', html: await renderMarkdown(block.body ?? '') };
+    }
+    if (block.__component === 'shared.media') {
+      return { type: 'media', file: block.file };
+    }
+    if (block.__component === 'shared.quote') {
+      return { type: 'quote', title: block.title, body: block.body };
+    }
+    if (block.__component === 'shared.slider') {
+      return { type: 'slider', files: block.files };
+    }
+    return null;
+  })
+);
+---
+
+<div class="prose max-w-none">
+  {rendered.map((block) => {
+    if (!block) return null;
+
+    if (block.type === 'html') {
+      return <Fragment set:html={block.html} />;
+    }
+
+    if (block.type === 'media') {
+      const url = getStrapiMedia((block.file as StrapiMedia)?.url);
+      return url ? (
+        <figure class="not-prose my-8">
+          <img
+            src={url}
+            alt={(block.file as StrapiMedia)?.alternativeText ?? ''}
+            class="rounded-xl w-full"
+            style="border: 1px solid var(--border);"
+            loading="lazy"
+          />
+        </figure>
+      ) : null;
+    }
+
+    if (block.type === 'quote') {
+      return (
+        <blockquote
+          class="not-prose my-8 px-6 py-5 rounded-xl"
+          style="border-left: 3px solid var(--brand); background: var(--surface-raised);"
+        >
+          {block.title && (
+            <p class="text-xs font-semibold uppercase tracking-wider mb-2" style="color: var(--brand);">
+              {block.title}
+            </p>
+          )}
+          <p class="text-base italic" style="color: var(--text-2);">{block.body}</p>
+        </blockquote>
+      );
+    }
+
+    if (block.type === 'slider') {
+      return (
+        <div class="not-prose my-8 flex gap-3 overflow-x-auto pb-2">
+          {(block.files as StrapiMedia[]).map((file) => {
+            const url = getStrapiMedia(file.url);
+            return url ? (
+              <img
+                src={url}
+                alt={file.alternativeText ?? ''}
+                class="rounded-xl shrink-0"
+                style="height: 240px; width: auto; border: 1px solid var(--border);"
+                loading="lazy"
+              />
+            ) : null;
+          })}
+        </div>
+      );
+    }
+
+    return null;
+  })}
+</div>
+
+<!-- Inject copy buttons into code blocks after mount -->
+<script>
+  document.querySelectorAll<HTMLElement>('.code-block').forEach((block) => {
+    const btn = block.querySelector<HTMLButtonElement>('.copy-btn');
+    if (!btn) return;
+    const label = btn.querySelector('span');
+    btn.addEventListener('click', async () => {
+      const code = block.querySelector('code')?.innerText ?? '';
+      try {
+        await navigator.clipboard.writeText(code);
+        const prev = label?.textContent ?? 'Copy';
+        if (label) label.textContent = 'Copied!';
+        btn.style.color = 'var(--brand)';
+        setTimeout(() => {
+          if (label) label.textContent = prev;
+          btn.style.color = '';
+        }, 2000);
+      } catch {}
+    });
+  });
+</script>

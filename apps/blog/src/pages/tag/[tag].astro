@@ -1,0 +1,78 @@
+---
+import BlogLayout from '@layouts/BlogLayout.astro';
+import PostCard from '@components/PostCard.astro';
+import { fetchStrapi, getArticleTags, tagToSlug } from '@lib/strapi';
+import type { StrapiList, StrapiArticle } from '@lib/strapi';
+
+export async function getStaticPaths() {
+  const { data: posts } = await fetchStrapi<StrapiList<StrapiArticle>>(
+    '/articles',
+    {
+      'populate[cover]': 'true',
+      'populate[category]': 'true',
+      'populate[blocks][populate]': '*',
+      'sort': 'publishedAt:desc',
+    }
+  );
+
+  const tagMap = new Map<string, { label: string; posts: StrapiArticle[] }>();
+  for (const post of posts) {
+    for (const tag of getArticleTags(post)) {
+      const key = tagToSlug(tag);
+      if (!tagMap.has(key)) tagMap.set(key, { label: tag, posts: [] });
+      tagMap.get(key)!.posts.push(post);
+    }
+  }
+
+  return [...tagMap.entries()].map(([key, { label, posts: tagPosts }]) => ({
+    params: { tag: key },
+    props: { tagLabel: label, tagKey: key, posts: tagPosts },
+  }));
+}
+
+const { tagLabel, posts } = Astro.props as {
+  tagLabel: string;
+  tagKey: string;
+  posts: StrapiArticle[];
+};
+---
+
+<BlogLayout
+  title={`#${tagLabel} — Blog`}
+  description={`${posts.length} article${posts.length === 1 ? '' : 's'} tagged with ${tagLabel}.`}
+>
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 py-16 sm:py-20">
+
+    <!-- Header -->
+    <div class="mb-10">
+      <a
+        href="/"
+        class="inline-flex items-center gap-1.5 text-sm mb-6 transition-colors"
+        style="color: var(--text-3);"
+        onmouseenter="this.style.color='var(--text-1)'"
+        onmouseleave="this.style.color='var(--text-3)'"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        All posts
+      </a>
+
+      <div class="flex items-center gap-3 mb-3">
+        <span
+          class="px-3 py-1 rounded-full text-sm font-semibold"
+          style="background: var(--text-1); color: var(--bg);"
+        >
+          #{tagLabel}
+        </span>
+      </div>
+      <p class="text-sm" style="color: var(--text-3);">
+        {posts.length} {posts.length === 1 ? 'post' : 'posts'}
+      </p>
+    </div>
+
+    <!-- Grid -->
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      {posts.map((post) => <PostCard post={post} />)}
+    </div>
+
+  </div>
+</BlogLayout>

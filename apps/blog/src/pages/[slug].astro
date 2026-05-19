@@ -1,0 +1,230 @@
+---
+import BlogLayout from '@layouts/BlogLayout.astro';
+import PostBody from '@components/PostBody.astro';
+import AuthorCard from '@components/AuthorCard.astro';
+import SocialShare from '@components/SocialShare.astro';
+import { TOCSidebar, TOCMobile } from '@components/TOC';
+import { fetchStrapi, getStrapiMedia, getArticleTags, tagToSlug } from '@lib/strapi';
+import { extractHeadings, calcReadingTime } from '@lib/markdown';
+import type { StrapiList, StrapiArticle } from '@lib/strapi';
+
+export async function getStaticPaths() {
+  const { data: posts } = await fetchStrapi<StrapiList<StrapiArticle>>(
+    '/articles',
+    { 'sort': 'publishedAt:desc' }
+  );
+  return posts.map((post, i) => ({
+    params: { slug: post.slug },
+    props: {
+      post,
+      prevPost: posts[i + 1] ?? null,
+      nextPost: posts[i - 1] ?? null,
+    },
+  }));
+}
+
+const { post: listPost, prevPost, nextPost } = Astro.props as {
+  post: StrapiArticle;
+  prevPost: StrapiArticle | null;
+  nextPost: StrapiArticle | null;
+};
+
+// Fetch full post with all populated fields
+const { data: posts } = await fetchStrapi<StrapiList<StrapiArticle>>(
+  '/articles',
+  {
+    'filters[slug][$eq]': listPost.slug,
+    'populate[cover]': 'true',
+    'populate[author]': 'true',
+    'populate[category]': 'true',
+    'populate[blocks][populate]': '*',
+  }
+);
+const post = posts[0] ?? listPost;
+
+const tags = getArticleTags(post);
+const coverUrl = getStrapiMedia(post.cover?.url);
+const author = post.author?.name ?? 'Subhan Farrakh';
+const pubDate = new Date(post.publishedAt);
+const updatedDate = post.updatedAt ? new Date(post.updatedAt) : undefined;
+const readingTime = calcReadingTime(post.blocks);
+const postUrl = `${Astro.site ?? 'https://blog.subhanfarrakh.com'}/blog/${post.slug}`;
+
+// Build TOC from all rich-text blocks
+const allMd = (post.blocks ?? [])
+  .filter((b) => b.__component === 'shared.rich-text')
+  .map((b) => (b as Extract<typeof b, { __component: 'shared.rich-text' }>).body ?? '')
+  .join('\n\n');
+const headings = extractHeadings(allMd);
+
+// Schema.org
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: post.title,
+  description: post.description,
+  datePublished: pubDate.toISOString(),
+  ...(updatedDate && { dateModified: updatedDate.toISOString() }),
+  author: { '@type': 'Person', name: author },
+  ...(post.cover?.url && { image: getStrapiMedia(post.cover.url) }),
+  keywords: tags.join(', '),
+  mainEntityOfPage: { '@type': 'WebPage', '@id': postUrl },
+};
+---
+
+<BlogLayout
+  title={post.title}
+  description={post.description}
+  pubDate={pubDate}
+  updatedDate={updatedDate}
+  author={author}
+  tags={tags}
+  image={coverUrl || undefined}
+  readingTime={readingTime}
+  isPost
+>
+  <Fragment slot="head">
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
+  </Fragment>
+
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 py-12">
+
+    <!-- Back link -->
+    <a
+      href="/"
+      class="inline-flex items-center gap-1.5 text-sm mb-10 transition-colors"
+      style="color: var(--text-3);"
+      onmouseenter="this.style.color='var(--text-1)'"
+      onmouseleave="this.style.color='var(--text-3)'"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+      All posts
+    </a>
+
+    <!-- 2-col layout: article + TOC sidebar -->
+    <div class:list={['lg:grid lg:gap-16', headings.length >= 2 && 'lg:grid-cols-[1fr_224px]']}>
+
+      <article>
+        <!-- Cover -->
+        {coverUrl && (
+          <div class="rounded-2xl overflow-hidden mb-10 aspect-video" style="background: var(--surface-raised);">
+            <img
+              src={coverUrl}
+              alt={post.cover?.alternativeText ?? post.title}
+              class="w-full h-full object-cover"
+              loading="eager"
+            />
+          </div>
+        )}
+
+        <!-- Tags -->
+        {tags.length > 0 && (
+          <div class="flex flex-wrap gap-2 mb-4">
+            {tags.map((tag) => (
+              <a
+                href={`/?tag=${tagToSlug(tag)}`}
+                class="text-xs px-2.5 py-1 rounded-full font-medium border transition-colors"
+                style="background: var(--surface-raised); color: var(--text-3); border-color: var(--border-subtle);"
+                onmouseenter="this.style.color='var(--brand)'; this.style.borderColor='oklch(0.790 0.137 193.8 / 0.4)'"
+                onmouseleave="this.style.color='var(--text-3)'; this.style.borderColor='var(--border-subtle)'"
+              >
+                {tag}
+              </a>
+            ))}
+          </div>
+        )}
+
+        <!-- Title -->
+        <h1 class="text-3xl sm:text-4xl font-bold tracking-tight mb-5 leading-tight" style="color: var(--text-1);">
+          {post.title}
+        </h1>
+
+        <!-- Meta bar -->
+        <div
+          class="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm mb-8 pb-8"
+          style="color: var(--text-3); border-bottom: 1px solid var(--border-subtle);"
+        >
+          <span>{author}</span>
+          <span style="color: var(--border);">·</span>
+          <time datetime={pubDate.toISOString()}>
+            {pubDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+          </time>
+          <span style="color: var(--border);">·</span>
+          <span>{readingTime} min read</span>
+          {updatedDate && updatedDate.getTime() !== pubDate.getTime() && (
+            <>
+              <span style="color: var(--border);">·</span>
+              <span class="text-xs italic">
+                Updated {updatedDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+              </span>
+            </>
+          )}
+        </div>
+
+        <!-- Mobile TOC -->
+        {headings.length >= 2 && (
+          <TOCMobile headings={headings} client:load />
+        )}
+
+        <!-- Content -->
+        {post.blocks?.length ? (
+          <PostBody blocks={post.blocks} />
+        ) : (
+          <p class="italic" style="color: var(--text-3);">This article has no content yet.</p>
+        )}
+
+        <!-- Author -->
+        {post.author && <AuthorCard author={post.author} />}
+
+        <!-- Share -->
+        <SocialShare title={post.title} url={postUrl} />
+
+        <!-- Prev / Next -->
+        {(prevPost || nextPost) && (
+          <nav
+            class="mt-12 pt-8 grid grid-cols-2 gap-4"
+            style="border-top: 1px solid var(--border-subtle);"
+            aria-label="Post navigation"
+          >
+            {prevPost ? (
+              <a
+                href={`/${prevPost.slug}`}
+                class="prev-next-btn flex flex-col p-4 rounded-xl border transition-colors"
+              >
+                <span class="text-xs mb-1.5" style="color: var(--text-3);">← Previous</span>
+                <span class="text-sm font-medium line-clamp-2" style="color: var(--text-1);">{prevPost.title}</span>
+              </a>
+            ) : <div />}
+            {nextPost ? (
+              <a
+                href={`/${nextPost.slug}`}
+                class="prev-next-btn flex flex-col items-end text-right p-4 rounded-xl border transition-colors"
+              >
+                <span class="text-xs mb-1.5" style="color: var(--text-3);">Next →</span>
+                <span class="text-sm font-medium line-clamp-2" style="color: var(--text-1);">{nextPost.title}</span>
+              </a>
+            ) : <div />}
+          </nav>
+        )}
+      </article>
+
+      <!-- Desktop TOC -->
+      {headings.length >= 2 && (
+        <TOCSidebar headings={headings} client:load />
+      )}
+
+    </div>
+  </div>
+</BlogLayout>
+
+<style>
+  .prev-next-btn {
+    background: var(--surface);
+    border-color: var(--border);
+  }
+  .prev-next-btn:hover {
+    border-color: oklch(0.790 0.137 193.8 / 0.4);
+    background: oklch(0.790 0.137 193.8 / 0.04);
+  }
+  .prev-next-btn:hover span:last-child { color: var(--brand) !important; }
+</style>
