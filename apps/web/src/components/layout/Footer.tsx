@@ -30,6 +30,13 @@ export const Footer = () => {
           "Do what you love the BEST, let me automate the REST." 😜
         </p>
         <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 text-xs text-gray-500">
+          <a href="/services/ai-automation" className="hover:text-gray-300 transition-colors">AI Automation</a>
+          <span aria-hidden="true">·</span>
+          <a href="/services/web-development" className="hover:text-gray-300 transition-colors">Web Development</a>
+          <span aria-hidden="true">·</span>
+          <a href="/services/ai-agents" className="hover:text-gray-300 transition-colors">AI Agents</a>
+        </div>
+        <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 text-xs text-gray-500">
           <a href="/privacy-policy" className="hover:text-gray-300 transition-colors">Privacy Policy</a>
           <span aria-hidden="true">·</span>
           <a href="/terms" className="hover:text-gray-300 transition-colors">Terms of Service</a>

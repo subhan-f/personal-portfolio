@@ -1,0 +1,162 @@
+---
+import MainLayout from '@layouts/MainLayout.astro';
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Service',
+      '@id': 'https://subhanfarrakh.com/services/web-development',
+      name: 'Full-Stack Web Development',
+      serviceType: 'Web Development',
+      provider: { '@id': 'https://subhanfarrakh.com/#person' },
+      description:
+        'React, Next.js, and MERN stack web application development — from MVPs to production-grade platforms with clean architecture and modern tooling.',
+      areaServed: { '@type': 'Country', name: 'Worldwide' },
+      url: 'https://subhanfarrakh.com/services/web-development',
+      offers: {
+        '@type': 'Offer',
+        availability: 'https://schema.org/InStock',
+        priceCurrency: 'USD',
+        seller: { '@id': 'https://subhanfarrakh.com/#person' },
+      },
+    },
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://subhanfarrakh.com' },
+        { '@type': 'ListItem', position: 2, name: 'Services', item: 'https://subhanfarrakh.com/services/web-development' },
+        { '@type': 'ListItem', position: 3, name: 'Web Development', item: 'https://subhanfarrakh.com/services/web-development' },
+      ],
+    },
+  ],
+};
+
+const faqs = [
+  { q: 'What frameworks do you specialise in?', a: 'React and Next.js on the frontend, Node.js / Express / Fastify on the backend, and PostgreSQL or MongoDB for data. I also work with Astro for content sites.' },
+  { q: 'Can you take over an existing codebase?', a: 'Yes. I do thorough code reviews before quoting. Legacy React/Node codebases are fine — I document what I find and propose a remediation plan.' },
+  { q: 'Do you do UI/UX design too?', a: 'I work from Figma designs or collaborate with a designer. I can produce high-fidelity wireframes, but dedicated UX research is outside my scope.' },
+  { q: 'How do you handle deployments and hosting?', a: 'I deploy to Vercel, Railway, Fly.io, or AWS/GCP depending on your needs. Everything is containerised (Docker) and set up with CI/CD from day one.' },
+];
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map(({ q, a }) => ({
+    '@type': 'Question',
+    name: q,
+    acceptedAnswer: { '@type': 'Answer', text: a },
+  })),
+};
+---
+
+<MainLayout
+  title="Full-Stack Web Development | React, Next.js & Node.js — Subhan Farrakh"
+  description="Hire a full-stack web developer specialising in React, Next.js, and Node.js. MVPs to production platforms — clean code, modern tooling, fast delivery."
+>
+  <Fragment slot="head">
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+  </Fragment>
+
+  <div class="min-h-screen bg-black text-white">
+
+    <!-- Hero -->
+    <section class="py-24 px-4 md:px-8 text-center max-w-4xl mx-auto">
+      <p class="text-[#1cd8d2] text-sm font-semibold uppercase tracking-widest mb-4">Full-Stack Web Development</p>
+      <h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight">
+        Web apps that ship fast<br />
+        <span class="bg-linear-to-r from-[#1cd8d2] to-[#00bf8f] bg-clip-text text-transparent">and scale further</span>
+      </h1>
+      <p class="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto mb-10">
+        React, Next.js, and Node.js development with clean architecture, solid testing, and zero-drama deployments — from idea to production.
+      </p>
+      <a
+        href="/contact"
+        class="inline-flex items-center gap-2 px-8 py-4 bg-linear-to-r from-[#1cd8d2] to-[#00bf8f] text-black font-bold rounded-xl text-lg hover:opacity-90 transition-opacity"
+      >
+        Discuss Your Project →
+      </a>
+    </section>
+
+    <!-- What I build -->
+    <section class="py-16 px-4 md:px-8 max-w-5xl mx-auto">
+      <h2 class="text-3xl font-bold text-center mb-12">What I build</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {[
+          { title: 'SaaS MVPs', desc: 'Auth, billing (Stripe), dashboards, and API — the full product loop, production-ready in weeks not months.' },
+          { title: 'B2B Portals & Dashboards', desc: 'Data-heavy interfaces with real-time updates, role-based access, and export capabilities built for power users.' },
+          { title: 'E-commerce Platforms', desc: 'Custom storefronts, headless Shopify/WooCommerce integrations, and checkout flows optimised for conversion.' },
+          { title: 'Content-Driven Sites', desc: 'Astro or Next.js with headless CMS (Strapi, Sanity, Contentful) — fast, SEO-optimised, and editor-friendly.' },
+          { title: 'REST & GraphQL APIs', desc: 'Clean, documented, versioned APIs with auth, rate limiting, and observability built in from the start.' },
+          { title: 'Migrations & Refactors', desc: 'Lift legacy apps to modern stacks — React 19, Next.js App Router, TypeScript strict mode, and modern infra.' },
+        ].map(({ title, desc }) => (
+          <div class="p-6 rounded-xl bg-white/5 border border-white/10 hover:border-[#1cd8d2]/40 transition-colors">
+            <h3 class="text-lg font-semibold mb-2 text-white">{title}</h3>
+            <p class="text-gray-400 text-sm leading-relaxed">{desc}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Stack -->
+    <section class="py-16 px-4 md:px-8 max-w-4xl mx-auto text-center">
+      <h2 class="text-3xl font-bold mb-4">Tech Stack</h2>
+      <p class="text-gray-400 mb-10">Tools I use daily and know well — no learning curve billed to you.</p>
+      <div class="flex flex-wrap justify-center gap-3">
+        {['React 19', 'Next.js 15', 'Astro', 'TypeScript', 'Node.js', 'Express', 'Fastify', 'PostgreSQL', 'MongoDB', 'Prisma', 'Drizzle', 'Supabase', 'Redis', 'Tailwind CSS', 'Vercel', 'Docker', 'GitHub Actions'].map((t) => (
+          <span class="px-4 py-2 bg-white/8 border border-white/10 rounded-lg text-gray-200 text-sm">{t}</span>
+        ))}
+      </div>
+    </section>
+
+    <!-- Process -->
+    <section class="py-16 px-4 md:px-8 max-w-3xl mx-auto">
+      <h2 class="text-3xl font-bold text-center mb-12">My development process</h2>
+      <ol class="space-y-8">
+        {[
+          { step: '01', title: 'Scoping', desc: 'Define features, agree on stack, break work into milestones. Fixed-price quotes for scoped projects; hourly for exploratory work.' },
+          { step: '02', title: 'Architecture', desc: 'Data model, API contracts, and folder structure documented before coding starts. No surprises mid-project.' },
+          { step: '03', title: 'Iterative delivery', desc: 'Weekly demos with a staging URL you can share. Feedback loops at every milestone, not just at the end.' },
+          { step: '04', title: 'Launch & support', desc: 'CI/CD pipeline, monitoring alerts, and a 30-day warranty on everything I ship.' },
+        ].map(({ step, title, desc }) => (
+          <li class="flex gap-6 items-start">
+            <span class="text-4xl font-bold text-[#1cd8d2]/30 leading-none w-14 shrink-0">{step}</span>
+            <div>
+              <h3 class="text-xl font-semibold mb-1">{title}</h3>
+              <p class="text-gray-400 leading-relaxed">{desc}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <!-- FAQ -->
+    <section class="py-16 px-4 md:px-8 max-w-3xl mx-auto">
+      <h2 class="text-3xl font-bold text-center mb-10">Frequently Asked Questions</h2>
+      <div class="space-y-6">
+        {faqs.map(({ q, a }) => (
+          <div class="border-b border-white/10 pb-6">
+            <h3 class="text-lg font-semibold mb-2">{q}</h3>
+            <p class="text-gray-400 leading-relaxed">{a}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="py-20 px-4 text-center">
+      <div class="max-w-2xl mx-auto p-10 rounded-2xl bg-linear-to-r from-[#1cd8d2]/10 to-[#00bf8f]/10 border border-[#1cd8d2]/20">
+        <h2 class="text-3xl font-bold mb-4">Let's build something together</h2>
+        <p class="text-gray-400 mb-8">Send me your brief and I'll respond within 24 hours with a timeline and estimate.</p>
+        <a
+          href="/contact"
+          class="inline-flex items-center gap-2 px-8 py-4 bg-linear-to-r from-[#1cd8d2] to-[#00bf8f] text-black font-bold rounded-xl hover:opacity-90 transition-opacity"
+        >
+          Get a Quote →
+        </a>
+      </div>
+    </section>
+
+  </div>
+</MainLayout>

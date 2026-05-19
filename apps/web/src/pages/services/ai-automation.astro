@@ -1,0 +1,162 @@
+---
+import MainLayout from '@layouts/MainLayout.astro';
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Service',
+      '@id': 'https://subhanfarrakh.com/services/ai-automation',
+      name: 'AI Automation Services',
+      serviceType: 'AI Workflow Automation',
+      provider: { '@id': 'https://subhanfarrakh.com/#person' },
+      description:
+        'Custom AI automation systems built with n8n, Make.com, and Agentic AI that eliminate repetitive work and scale business operations.',
+      areaServed: { '@type': 'Country', name: 'Worldwide' },
+      url: 'https://subhanfarrakh.com/services/ai-automation',
+      offers: {
+        '@type': 'Offer',
+        availability: 'https://schema.org/InStock',
+        priceCurrency: 'USD',
+        seller: { '@id': 'https://subhanfarrakh.com/#person' },
+      },
+    },
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://subhanfarrakh.com' },
+        { '@type': 'ListItem', position: 2, name: 'Services', item: 'https://subhanfarrakh.com/services/ai-automation' },
+        { '@type': 'ListItem', position: 3, name: 'AI Automation', item: 'https://subhanfarrakh.com/services/ai-automation' },
+      ],
+    },
+  ],
+};
+
+const faqs = [
+  { q: 'What tools do you use for AI automation?', a: 'Primarily n8n and Make.com for workflow orchestration, combined with OpenAI, LangChain, and custom agentic pipelines for the AI layer.' },
+  { q: 'Can you automate my existing tools?', a: 'Yes — I integrate with 500+ apps including CRMs, Slack, Gmail, Airtable, Notion, Shopify, and custom REST APIs.' },
+  { q: 'How long does a typical automation project take?', a: 'Simple automations take 2–5 days. Complex multi-step agentic pipelines typically take 2–4 weeks depending on integrations.' },
+  { q: 'Do you offer ongoing support after delivery?', a: 'Yes, I offer 30 days of free bug-fix support on every project, plus optional monthly retainers for maintenance.' },
+];
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map(({ q, a }) => ({
+    '@type': 'Question',
+    name: q,
+    acceptedAnswer: { '@type': 'Answer', text: a },
+  })),
+};
+---
+
+<MainLayout
+  title="AI Automation Services | n8n, Make & Agentic AI — Subhan Farrakh"
+  description="Hire an AI automation expert to build n8n workflows, Make.com automations, and agentic AI pipelines that eliminate repetitive work and scale your business."
+>
+  <Fragment slot="head">
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+  </Fragment>
+
+  <div class="min-h-screen bg-black text-white">
+
+    <!-- Hero -->
+    <section class="py-24 px-4 md:px-8 text-center max-w-4xl mx-auto">
+      <p class="text-[#1cd8d2] text-sm font-semibold uppercase tracking-widest mb-4">AI Automation Services</p>
+      <h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight">
+        Stop doing manually what<br />
+        <span class="bg-linear-to-r from-[#1cd8d2] to-[#00bf8f] bg-clip-text text-transparent">a machine can do for you</span>
+      </h1>
+      <p class="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto mb-10">
+        I design and build custom AI automation systems using n8n, Make.com, and agentic AI — so your team spends time on work that actually matters.
+      </p>
+      <a
+        href="/contact"
+        class="inline-flex items-center gap-2 px-8 py-4 bg-linear-to-r from-[#1cd8d2] to-[#00bf8f] text-black font-bold rounded-xl text-lg hover:opacity-90 transition-opacity"
+      >
+        Book a Free Discovery Call →
+      </a>
+    </section>
+
+    <!-- What I build -->
+    <section class="py-16 px-4 md:px-8 max-w-5xl mx-auto">
+      <h2 class="text-3xl font-bold text-center mb-12">What I build</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {[
+          { title: 'Lead Qualification & CRM Pipelines', desc: 'Automatically score, route, and enrich inbound leads from any source into your CRM — zero manual data entry.' },
+          { title: 'AI-Powered Document Processing', desc: 'Extract, classify, and act on data from PDFs, emails, and forms using LLMs trained on your business context.' },
+          { title: 'Multi-Channel Notification Systems', desc: 'Connect triggers across Slack, email, SMS, and webhooks into a single, orchestrated notification layer.' },
+          { title: 'Agentic AI Assistants', desc: 'LLM agents that browse the web, query databases, call APIs, and execute multi-step decisions autonomously.' },
+          { title: 'E-commerce & Inventory Automation', desc: 'Sync orders, update inventory, generate reports, and trigger fulfillment flows across your entire stack.' },
+          { title: 'Social & Content Pipelines', desc: 'Automated content repurposing: blog post → LinkedIn thread → email newsletter → social clips, hands-free.' },
+        ].map(({ title, desc }) => (
+          <div class="p-6 rounded-xl bg-white/5 border border-white/10 hover:border-[#1cd8d2]/40 transition-colors">
+            <h3 class="text-lg font-semibold mb-2 text-white">{title}</h3>
+            <p class="text-gray-400 text-sm leading-relaxed">{desc}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Tools -->
+    <section class="py-16 px-4 md:px-8 max-w-4xl mx-auto text-center">
+      <h2 class="text-3xl font-bold mb-4">Tools & Platforms</h2>
+      <p class="text-gray-400 mb-10">I work with the tools you already use — or choose the best fit for your stack.</p>
+      <div class="flex flex-wrap justify-center gap-3">
+        {['n8n', 'Make.com', 'Zapier', 'OpenAI', 'LangChain', 'LlamaIndex', 'Airtable', 'Notion', 'Slack', 'HubSpot', 'Pipedrive', 'Supabase', 'PostgreSQL', 'Redis', 'Webhooks / REST APIs'].map((tool) => (
+          <span class="px-4 py-2 bg-white/8 border border-white/10 rounded-lg text-gray-200 text-sm">{tool}</span>
+        ))}
+      </div>
+    </section>
+
+    <!-- Process -->
+    <section class="py-16 px-4 md:px-8 max-w-3xl mx-auto">
+      <h2 class="text-3xl font-bold text-center mb-12">How it works</h2>
+      <ol class="space-y-8">
+        {[
+          { step: '01', title: 'Discovery', desc: 'We map your current workflow, identify bottlenecks, and agree on exactly what the automation should do.' },
+          { step: '02', title: 'Design', desc: 'I draft the architecture — data flow, triggers, error handling — and share it before writing a single line.' },
+          { step: '03', title: 'Build & Test', desc: 'I build iteratively in a staging environment, testing every edge case before anything touches your live data.' },
+          { step: '04', title: 'Handoff', desc: 'Loom walkthrough, full documentation, and 30 days of free support. You own everything.' },
+        ].map(({ step, title, desc }) => (
+          <li class="flex gap-6 items-start">
+            <span class="text-4xl font-bold text-[#1cd8d2]/30 leading-none w-14 shrink-0">{step}</span>
+            <div>
+              <h3 class="text-xl font-semibold mb-1">{title}</h3>
+              <p class="text-gray-400 leading-relaxed">{desc}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <!-- FAQ -->
+    <section class="py-16 px-4 md:px-8 max-w-3xl mx-auto">
+      <h2 class="text-3xl font-bold text-center mb-10">Frequently Asked Questions</h2>
+      <div class="space-y-6">
+        {faqs.map(({ q, a }) => (
+          <div class="border-b border-white/10 pb-6">
+            <h3 class="text-lg font-semibold mb-2">{q}</h3>
+            <p class="text-gray-400 leading-relaxed">{a}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="py-20 px-4 text-center">
+      <div class="max-w-2xl mx-auto p-10 rounded-2xl bg-linear-to-r from-[#1cd8d2]/10 to-[#00bf8f]/10 border border-[#1cd8d2]/20">
+        <h2 class="text-3xl font-bold mb-4">Ready to automate?</h2>
+        <p class="text-gray-400 mb-8">Tell me what you want to stop doing manually. I'll build it.</p>
+        <a
+          href="/contact"
+          class="inline-flex items-center gap-2 px-8 py-4 bg-linear-to-r from-[#1cd8d2] to-[#00bf8f] text-black font-bold rounded-xl hover:opacity-90 transition-opacity"
+        >
+          Start a Project →
+        </a>
+      </div>
+    </section>
+
+  </div>
+</MainLayout>

@@ -3,17 +3,17 @@ import MainLayout from '@layouts/MainLayout.astro';
 import { fetchStrapi } from '@lib/strapi';
 import type { StrapiList, StrapiExperience } from '@lib/strapi';
 
-const { data: experiences } = await fetchStrapi<StrapiList<StrapiExperience>>(
-  '/experiences',
-  { 'sort': 'publishedAt:desc' }
-);
+const { data: experiences } = await fetchStrapi<StrapiList<StrapiExperience>>('/experiences', {
+  sort: 'publishedAt:desc',
+});
 
 const schema = {
   '@context': 'https://schema.org',
   '@type': 'CollectionPage',
   '@id': 'https://subhanfarrakh.com/experience',
   name: 'Professional Experience',
-  description: "Subhan Farrakh's professional journey in AI automation, full-stack development, and workflow optimization.",
+  description:
+    "Subhan Farrakh's professional journey in AI automation, full-stack development, and workflow optimization.",
   url: 'https://subhanfarrakh.com/experience',
   author: { '@id': 'https://subhanfarrakh.com/#person' },
   mainEntity: {
@@ -29,14 +29,19 @@ const schema = {
 };
 ---
 
-<MainLayout title="Professional Experience | AI Automation & Development" description="Explore Subhan Farrakh's professional journey in AI automation, full-stack development, and workflow optimization across international clients.">
+<MainLayout
+  title="Professional Experience | AI Automation & Development"
+  description="Explore Subhan Farrakh's professional journey in AI automation, full-stack development, and workflow optimization across international clients."
+>
   <Fragment slot="head">
     <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
   </Fragment>
   <section class="min-h-screen bg-black text-white py-20 px-4 md:px-8">
     <div class="max-w-5xl mx-auto">
       <h1 class="text-4xl md:text-5xl font-bold text-center mb-4">
-        <span class="bg-gradient-to-r from-[#1cd8d2] via-[#00bf8f] to-[#1cd8d2] bg-clip-text text-transparent">
+        <span
+          class="bg-linear-to-r from-[#1cd8d2] via-[#00bf8f] to-[#1cd8d2] bg-clip-text text-transparent"
+        >
           Professional Journey
         </span>
       </h1>
@@ -45,38 +50,42 @@ const schema = {
       </p>
 
       <div class="space-y-6">
-        {experiences.map((exp) => (
-          <a href={`/experience/${exp.slug}`} class="block group">
-            <div class="relative overflow-hidden rounded-xl bg-gray-900/50 border border-white/10 p-6 md:p-8 hover:border-[#1cd8d2]/50 hover:-translate-y-1 transition-all duration-300">
-              <div class="absolute inset-0 bg-gradient-to-r from-[#1cd8d2]/0 via-[#1cd8d2]/0 to-[#1cd8d2]/0 group-hover:from-[#1cd8d2]/5 group-hover:via-transparent group-hover:to-transparent transition-all duration-500" />
-              <div class="relative z-10">
-                <div class="flex flex-wrap items-start justify-between gap-4 mb-3">
-                  <div>
-                    <h2 class="text-2xl md:text-3xl font-bold group-hover:text-[#1cd8d2] transition-colors">
-                      {exp.role}
-                    </h2>
-                    <p class="text-lg text-gray-300">{exp.company}</p>
+        {
+          experiences.map((exp) => (
+            <a href={`/experience/${exp.slug}`} class="block group">
+              <div class="relative overflow-hidden rounded-xl bg-gray-900/50 border border-white/10 p-6 md:p-8 hover:border-[#1cd8d2]/50 hover:-translate-y-1 transition-all duration-300">
+                <div class="absolute inset-0 bg-linear-to-r from-[#1cd8d2]/0 via-[#1cd8d2]/0 to-[#1cd8d2]/0 group-hover:from-[#1cd8d2]/5 group-hover:via-transparent group-hover:to-transparent transition-all duration-500" />
+                <div class="relative z-10">
+                  <div class="flex flex-wrap items-start justify-between gap-4 mb-3">
+                    <div>
+                      <h2 class="text-2xl md:text-3xl font-bold group-hover:text-[#1cd8d2] transition-colors">
+                        {exp.role}
+                      </h2>
+                      <p class="text-lg text-gray-300">{exp.company}</p>
+                    </div>
+                  </div>
+                  <div class="flex flex-wrap gap-4 text-sm text-gray-400 mb-4">
+                    <span>{exp.duration}</span>
+                    {exp.location && <span>{exp.location}</span>}
+                  </div>
+                  <p class="text-gray-300 mb-4">{exp.shortDescription}</p>
+                  <div class="flex flex-wrap gap-2">
+                    {(exp.technologies ?? []).slice(0, 4).map((tech) => (
+                      <span class="text-xs px-3 py-1 bg-white/10 rounded-full text-gray-300">
+                        {tech}
+                      </span>
+                    ))}
+                    {(exp.technologies ?? []).length > 4 && (
+                      <span class="text-xs px-3 py-1 bg-white/10 rounded-full text-gray-300">
+                        +{exp.technologies.length - 4}
+                      </span>
+                    )}
                   </div>
                 </div>
-                <div class="flex flex-wrap gap-4 text-sm text-gray-400 mb-4">
-                  <span>{exp.duration}</span>
-                  {exp.location && <span>{exp.location}</span>}
-                </div>
-                <p class="text-gray-300 mb-4">{exp.shortDescription}</p>
-                <div class="flex flex-wrap gap-2">
-                  {(exp.technologies ?? []).slice(0, 4).map((tech) => (
-                    <span class="text-xs px-3 py-1 bg-white/10 rounded-full text-gray-300">{tech}</span>
-                  ))}
-                  {(exp.technologies ?? []).length > 4 && (
-                    <span class="text-xs px-3 py-1 bg-white/10 rounded-full text-gray-300">
-                      +{exp.technologies.length - 4}
-                    </span>
-                  )}
-                </div>
               </div>
-            </div>
-          </a>
-        ))}
+            </a>
+          ))
+        }
       </div>
     </div>
   </section>

@@ -48,7 +48,8 @@ const author = post.author?.name ?? 'Subhan Farrakh';
 const pubDate = new Date(post.publishedAt);
 const updatedDate = post.updatedAt ? new Date(post.updatedAt) : undefined;
 const readingTime = calcReadingTime(post.blocks);
-const postUrl = `${Astro.site ?? 'https://blog.subhanfarrakh.com'}/blog/${post.slug}`;
+const postUrl = `${Astro.site ?? 'https://blog.subhanfarrakh.com'}/${post.slug}`;
+const generatedOg = `${Astro.site ?? 'https://blog.subhanfarrakh.com'}/og/${post.slug}.png`;
 
 // Build TOC from all rich-text blocks
 const allMd = (post.blocks ?? [])
@@ -100,7 +101,7 @@ const schema = {
   updatedDate={updatedDate}
   author={author}
   tags={tags}
-  image={coverUrl || undefined}
+  image={coverUrl || generatedOg}
   readingTime={readingTime}
   isPost
 >

@@ -1,0 +1,162 @@
+---
+import MainLayout from '@layouts/MainLayout.astro';
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Service',
+      '@id': 'https://subhanfarrakh.com/services/ai-agents',
+      name: 'Custom AI Agents & LLM Integration',
+      serviceType: 'Artificial Intelligence Development',
+      provider: { '@id': 'https://subhanfarrakh.com/#person' },
+      description:
+        'Design and build custom AI agents, RAG systems, and LLM-powered applications using OpenAI, LangChain, and open-source models.',
+      areaServed: { '@type': 'Country', name: 'Worldwide' },
+      url: 'https://subhanfarrakh.com/services/ai-agents',
+      offers: {
+        '@type': 'Offer',
+        availability: 'https://schema.org/InStock',
+        priceCurrency: 'USD',
+        seller: { '@id': 'https://subhanfarrakh.com/#person' },
+      },
+    },
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://subhanfarrakh.com' },
+        { '@type': 'ListItem', position: 2, name: 'Services', item: 'https://subhanfarrakh.com/services/ai-agents' },
+        { '@type': 'ListItem', position: 3, name: 'AI Agents', item: 'https://subhanfarrakh.com/services/ai-agents' },
+      ],
+    },
+  ],
+};
+
+const faqs = [
+  { q: 'What is an AI agent, exactly?', a: 'An AI agent is an LLM (like GPT-4) given tools — web search, database queries, API calls, code execution — so it can complete multi-step tasks autonomously rather than just answering questions.' },
+  { q: 'What models do you work with?', a: 'OpenAI (GPT-4o, o1), Anthropic Claude, Mistral, Llama 3, and Gemini. I recommend the best model for your latency, cost, and capability requirements.' },
+  { q: 'How do you prevent hallucinations?', a: 'Through RAG (retrieval-augmented generation) grounded in your own data, output validation layers, and structured JSON outputs with schema enforcement.' },
+  { q: 'Can you integrate a chatbot into my existing product?', a: 'Yes — as a React component, iframe embed, Slack/Teams bot, or via API. I handle the full integration including streaming responses and conversation memory.' },
+];
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map(({ q, a }) => ({
+    '@type': 'Question',
+    name: q,
+    acceptedAnswer: { '@type': 'Answer', text: a },
+  })),
+};
+---
+
+<MainLayout
+  title="Custom AI Agents & LLM Integration | Chatbots & RAG Systems — Subhan Farrakh"
+  description="Build custom AI agents, RAG chatbots, and LLM-powered features into your product. OpenAI, LangChain, and open-source models — production-ready."
+>
+  <Fragment slot="head">
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+  </Fragment>
+
+  <div class="min-h-screen bg-black text-white">
+
+    <!-- Hero -->
+    <section class="py-24 px-4 md:px-8 text-center max-w-4xl mx-auto">
+      <p class="text-[#1cd8d2] text-sm font-semibold uppercase tracking-widest mb-4">AI Agents & LLM Integration</p>
+      <h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight">
+        AI that acts, not just<br />
+        <span class="bg-linear-to-r from-[#1cd8d2] to-[#00bf8f] bg-clip-text text-transparent">answers questions</span>
+      </h1>
+      <p class="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto mb-10">
+        I build AI agents and LLM-powered features that integrate into your product — reliably, with guardrails, grounded in your own data.
+      </p>
+      <a
+        href="/contact"
+        class="inline-flex items-center gap-2 px-8 py-4 bg-linear-to-r from-[#1cd8d2] to-[#00bf8f] text-black font-bold rounded-xl text-lg hover:opacity-90 transition-opacity"
+      >
+        Explore What's Possible →
+      </a>
+    </section>
+
+    <!-- What I build -->
+    <section class="py-16 px-4 md:px-8 max-w-5xl mx-auto">
+      <h2 class="text-3xl font-bold text-center mb-12">What I build</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {[
+          { title: 'RAG Chatbots', desc: 'AI assistants grounded in your documentation, knowledge base, or product data — accurate answers, no hallucinations.' },
+          { title: 'Autonomous Agents', desc: 'LLM agents with tool use: web search, code execution, database queries, API calls — completing tasks end-to-end.' },
+          { title: 'AI-Powered Search', desc: 'Semantic + hybrid search over your content using embeddings and vector databases (Pinecone, pgvector, Qdrant).' },
+          { title: 'Document Intelligence', desc: 'Extract structured data from PDFs, contracts, invoices, and forms — with validation and confidence scoring.' },
+          { title: 'AI Feature Integration', desc: 'Add LLM-powered features to your existing web app: auto-complete, summarisation, classification, generation.' },
+          { title: 'Voice AI', desc: 'Conversational voice agents with real-time STT/TTS pipelines using Whisper, ElevenLabs, or Azure Cognitive Services.' },
+        ].map(({ title, desc }) => (
+          <div class="p-6 rounded-xl bg-white/5 border border-white/10 hover:border-[#1cd8d2]/40 transition-colors">
+            <h3 class="text-lg font-semibold mb-2 text-white">{title}</h3>
+            <p class="text-gray-400 text-sm leading-relaxed">{desc}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Stack -->
+    <section class="py-16 px-4 md:px-8 max-w-4xl mx-auto text-center">
+      <h2 class="text-3xl font-bold mb-4">Models & Tools</h2>
+      <p class="text-gray-400 mb-10">I use the best tool for the job — not just the most popular one.</p>
+      <div class="flex flex-wrap justify-center gap-3">
+        {['OpenAI GPT-4o', 'Claude 3.5 / 4', 'Llama 3', 'Mistral', 'LangChain', 'LangGraph', 'LlamaIndex', 'Pinecone', 'pgvector', 'Qdrant', 'Whisper', 'ElevenLabs', 'Vercel AI SDK', 'Hugging Face', 'Python', 'Node.js'].map((t) => (
+          <span class="px-4 py-2 bg-white/8 border border-white/10 rounded-lg text-gray-200 text-sm">{t}</span>
+        ))}
+      </div>
+    </section>
+
+    <!-- Process -->
+    <section class="py-16 px-4 md:px-8 max-w-3xl mx-auto">
+      <h2 class="text-3xl font-bold text-center mb-12">How I approach AI projects</h2>
+      <ol class="space-y-8">
+        {[
+          { step: '01', title: 'Define the task & constraints', desc: 'What does success look like? What are the failure modes you cannot accept? I document these before touching any model.' },
+          { step: '02', title: 'Prototype & evaluate', desc: 'A working prototype with eval metrics — not vibes. I measure accuracy, latency, and cost from day one.' },
+          { step: '03', title: 'Build production guardrails', desc: 'Output validation, fallback paths, cost caps, logging, and monitoring. AI in production needs guardrails, not just prompts.' },
+          { step: '04', title: 'Deploy & iterate', desc: 'Ship behind a feature flag. Collect real usage data. Improve prompts and retrieval with production signal.' },
+        ].map(({ step, title, desc }) => (
+          <li class="flex gap-6 items-start">
+            <span class="text-4xl font-bold text-[#1cd8d2]/30 leading-none w-14 shrink-0">{step}</span>
+            <div>
+              <h3 class="text-xl font-semibold mb-1">{title}</h3>
+              <p class="text-gray-400 leading-relaxed">{desc}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <!-- FAQ -->
+    <section class="py-16 px-4 md:px-8 max-w-3xl mx-auto">
+      <h2 class="text-3xl font-bold text-center mb-10">Frequently Asked Questions</h2>
+      <div class="space-y-6">
+        {faqs.map(({ q, a }) => (
+          <div class="border-b border-white/10 pb-6">
+            <h3 class="text-lg font-semibold mb-2">{q}</h3>
+            <p class="text-gray-400 leading-relaxed">{a}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="py-20 px-4 text-center">
+      <div class="max-w-2xl mx-auto p-10 rounded-2xl bg-linear-to-r from-[#1cd8d2]/10 to-[#00bf8f]/10 border border-[#1cd8d2]/20">
+        <h2 class="text-3xl font-bold mb-4">Have an AI use case in mind?</h2>
+        <p class="text-gray-400 mb-8">I'll tell you honestly if it's a good fit for LLMs — and what the realistic scope looks like.</p>
+        <a
+          href="/contact"
+          class="inline-flex items-center gap-2 px-8 py-4 bg-linear-to-r from-[#1cd8d2] to-[#00bf8f] text-black font-bold rounded-xl hover:opacity-90 transition-opacity"
+        >
+          Let's Talk →
+        </a>
+      </div>
+    </section>
+
+  </div>
+</MainLayout>
