@@ -9,7 +9,7 @@ export const myData = {
     'https://linkedin.com/in/subhanf',
     'https://github.com/subhan-f',
     'https://www.fiverr.com/subhan_codes',
-    'https://twitter.com/SubhanFarrakh',
+    'https://x.com/SubhanFarrakh',
   ],
   jobTitle: 'AI Automation Engineer',
   description:
