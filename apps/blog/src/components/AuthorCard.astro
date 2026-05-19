@@ -1,0 +1,32 @@
+---
+import type { StrapiAuthor } from '@lib/strapi';
+import { getStrapiMedia } from '@lib/strapi';
+
+const { author } = Astro.props as { author: StrapiAuthor };
+const avatarUrl = getStrapiMedia(author.avatar?.url);
+---
+
+<div
+  class="flex items-center gap-4 p-5 rounded-xl mt-10"
+  style="background: var(--surface-raised); border: 1px solid var(--border-subtle);"
+>
+  {avatarUrl ? (
+    <img
+      src={avatarUrl}
+      alt={author.name}
+      class="w-12 h-12 rounded-full object-cover shrink-0"
+      style="border: 2px solid var(--border);"
+    />
+  ) : (
+    <div
+      class="w-12 h-12 rounded-full shrink-0 flex items-center justify-center text-lg font-bold"
+      style="background: linear-gradient(135deg, var(--brand), var(--brand-alt)); color: #fff;"
+    >
+      {author.name.charAt(0)}
+    </div>
+  )}
+  <div>
+    <p class="text-xs mb-0.5" style="color: var(--text-3);">Written by</p>
+    <p class="text-sm font-semibold" style="color: var(--text-1);">{author.name}</p>
+  </div>
+</div>

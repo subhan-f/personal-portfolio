@@ -1,0 +1,198 @@
+---
+import { fetchStrapi } from '@lib/strapi';
+import type { StrapiList, StrapiArticle } from '@lib/strapi';
+
+const { data: posts } = await fetchStrapi<StrapiList<StrapiArticle>>(
+  '/articles',
+  { 'sort': 'publishedAt:desc' }
+).catch(() => ({ data: [] as StrapiArticle[] }));
+
+const year = new Date().getFullYear();
+const lastPost = posts[0];
+const lastDate = lastPost
+  ? new Date(lastPost.publishedAt).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+  : null;
+---
+
+<footer class="footer">
+  <!-- Dot-grid background layer -->
+  <div class="footer-grid" aria-hidden="true" />
+
+  <div class="footer-inner">
+
+    <!-- Stats bar -->
+    <div class="footer-stats">
+      <span class="stat-item">
+        <span class="stat-label">Posts published</span>
+        <span class="stat-value">{posts.length}</span>
+      </span>
+      {lastDate && (
+        <span class="stat-sep" aria-hidden="true">·</span>
+        <span class="stat-item">
+          <span class="stat-label">Last published</span>
+          <span class="stat-value">{lastDate}</span>
+        </span>
+      )}
+      <span class="stat-sep" aria-hidden="true">·</span>
+      <span class="stat-item">
+        <span class="stat-label">Stack</span>
+        <span class="stat-value">Astro + Strapi</span>
+      </span>
+    </div>
+
+    <!-- Links grid -->
+    <div class="footer-links">
+      <div class="link-col">
+        <p class="col-heading">Blog</p>
+        <a href="/" class="footer-link">All posts</a>
+        <a href="/rss.xml" class="footer-link">RSS feed</a>
+        <a href="https://subhanfarrakh.com" target="_blank" rel="noopener" class="footer-link">Portfolio</a>
+      </div>
+      <div class="link-col">
+        <p class="col-heading">Connect</p>
+        <a href="https://github.com/subhan-f" target="_blank" rel="noopener" class="footer-link">GitHub</a>
+        <a href="https://x.com/SubhanFarrakh" target="_blank" rel="noopener" class="footer-link">X / Twitter</a>
+        <a href="https://linkedin.com/in/subhanf" target="_blank" rel="noopener" class="footer-link">LinkedIn</a>
+      </div>
+      <div class="link-col">
+        <p class="col-heading">Work</p>
+        <a href="https://subhanfarrakh.com/projects" target="_blank" rel="noopener" class="footer-link">Projects</a>
+        <a href="https://github.com/subhan-f" target="_blank" rel="noopener" class="footer-link">Source</a>
+      </div>
+    </div>
+
+    <!-- Bottom bar -->
+    <div class="footer-bar">
+      <div class="footer-identity">
+        <span class="footer-logo">SF<span class="dot">.</span></span>
+        <span class="footer-copy">© {year} Subhan Farrakh</span>
+      </div>
+      <span class="footer-built">
+        Designed &amp; built with <span class="heart" aria-label="love">♥</span> using Astro
+      </span>
+    </div>
+
+  </div>
+</footer>
+
+<style>
+  .footer {
+    position: relative;
+    overflow: hidden;
+    border-top: 1px solid var(--border-subtle);
+    margin-top: 6rem;
+  }
+
+  /* Dot grid — adapts to both light and dark via CSS var */
+  .footer-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(circle, var(--border-subtle) 1px, transparent 1px);
+    background-size: 20px 20px;
+    background-position: 0 0;
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  .footer-inner {
+    position: relative;
+    max-width: 64rem;
+    margin: 0 auto;
+    padding: 3rem 1.5rem 0;
+  }
+
+  /* Stats bar */
+  .footer-stats {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.875rem 1.25rem;
+    border-radius: 10px;
+    border: 1px solid oklch(from var(--border) l c h / 0.5);
+    background: oklch(from var(--surface) l c h / 0.6);
+    backdrop-filter: blur(8px);
+    margin-bottom: 2.5rem;
+    font-size: 0.8125rem;
+  }
+
+  .stat-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .stat-label { color: var(--text-3); }
+  .stat-value { color: var(--text-2); font-weight: 500; font-variant-numeric: tabular-nums; }
+  .stat-sep { color: var(--border); }
+
+  /* Links grid */
+  .footer-links {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    padding-bottom: 2.5rem;
+    border-bottom: 1px solid var(--border-subtle);
+    margin-bottom: 0;
+  }
+
+  @media (max-width: 480px) {
+    .footer-links { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .link-col { display: flex; flex-direction: column; gap: 0.6rem; }
+
+  .col-heading {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-3);
+    margin-bottom: 0.25rem;
+  }
+
+  .footer-link {
+    font-size: 0.875rem;
+    color: var(--text-2);
+    text-decoration: none;
+    transition: color 0.15s;
+    width: fit-content;
+  }
+  .footer-link:hover { color: var(--brand); }
+
+  /* Bottom bar */
+  .footer-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    padding: 1.25rem 0 1.5rem;
+  }
+
+  .footer-identity {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .footer-logo {
+    font-size: 1.125rem;
+    font-weight: 800;
+    color: var(--text-1);
+    letter-spacing: -0.01em;
+  }
+  .dot { color: var(--brand); }
+
+  .footer-copy {
+    font-size: 0.8125rem;
+    color: var(--text-3);
+  }
+
+  .footer-built {
+    font-size: 0.8125rem;
+    color: var(--text-3);
+  }
+  .heart { color: var(--brand); font-size: 0.75rem; }
+</style>

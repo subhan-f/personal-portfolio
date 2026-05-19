@@ -12,11 +12,7 @@ export default defineConfig({
     mdx(),
     sitemap({
       serialize(item) {
-        // Give blog pages higher priority
-        if (item.url.includes("/blog")) {
-          item.priority = 0.8;
-          item.changefreq = ChangeFreqEnum.WEEKLY;
-        } else if (item.url === "https://subhanfarrakh.com/") {
+        if (item.url === "https://subhanfarrakh.com/") {
           item.priority = 1.0;
           item.changefreq = ChangeFreqEnum.MONTHLY;
         } else {
@@ -29,6 +25,11 @@ export default defineConfig({
   ],
   vite: {
     plugins: [tailwindcss()],
+    server: {
+      fs: {
+        strict: false,
+      },
+    },
   },
   server: {
     headers: {

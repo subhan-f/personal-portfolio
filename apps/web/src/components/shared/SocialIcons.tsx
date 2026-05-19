@@ -36,7 +36,7 @@ export const socialLinks: SocialLink[] = [
     href: 'https://www.fiverr.com/subhan_codes',
   },
   { Icon: FiGithub, label: 'GitHub', href: 'https://github.com/subhan-f' },
-  { Icon: FaXTwitter, label: 'X', href: 'https://twitter.com/@SubhanFarrakh' },
+  { Icon: FaXTwitter, label: 'X', href: 'https://x.com/SubhanFarrakh' },
 ];
 
 export const SocialIcons = ({ className }: { className?: string }) => (

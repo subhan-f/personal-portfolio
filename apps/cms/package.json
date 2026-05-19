@@ -11,6 +11,7 @@
     "develop": "strapi develop",
     "seed:example": "node ./scripts/seed.js",
     "seed:portfolio": "node ./scripts/seed-portfolio.js",
+    "seed:blogs": "node ./scripts/seed-blogs.js",
     "start": "strapi start",
     "strapi": "strapi",
     "upgrade": "npx @strapi/upgrade latest",

@@ -1,0 +1,96 @@
+---
+import type { StrapiArticle } from '@lib/strapi';
+import { getStrapiMedia, getArticleTags, tagToSlug } from '@lib/strapi';
+import { calcReadingTime } from '@lib/markdown';
+
+interface Props {
+  post: StrapiArticle;
+  featured?: boolean;
+}
+
+const { post, featured = false } = Astro.props;
+const tags = getArticleTags(post);
+const coverUrl = getStrapiMedia(post.cover?.url);
+const readingTime = calcReadingTime(post.blocks);
+const pubDate = new Date(post.publishedAt).toLocaleDateString('en-US', {
+  year: 'numeric', month: 'short', day: 'numeric',
+});
+---
+
+<a
+  href={`/${post.slug}`}
+  class:list={['post-card group flex flex-col rounded-xl overflow-hidden transition-all duration-200', featured && 'featured']}
+  style="background: var(--surface); border: 1px solid var(--border);"
+>
+  <!-- Cover -->
+  <div class="aspect-video overflow-hidden" style="background: var(--surface-raised);">
+    {coverUrl ? (
+      <img
+        src={coverUrl}
+        alt={post.cover?.alternativeText ?? post.title}
+        class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+        loading="lazy"
+      />
+    ) : (
+      <div class="w-full h-full flex items-center justify-center">
+        <span
+          class="text-4xl font-bold"
+          style="color: var(--border);"
+        >
+          {post.title.charAt(0)}
+        </span>
+      </div>
+    )}
+  </div>
+
+  <!-- Content -->
+  <div class="flex flex-col flex-1 p-5">
+    <!-- Tags -->
+    {tags.length > 0 && (
+      <div class="flex flex-wrap gap-1.5 mb-3">
+        {tags.slice(0, 3).map((tag) => (
+          <span
+            class="text-[11px] px-2 py-0.5 rounded-full font-medium"
+            style="background: var(--surface-raised); color: var(--text-3); border: 1px solid var(--border-subtle);"
+          >
+            {tag}
+          </span>
+        ))}
+      </div>
+    )}
+
+    <!-- Title -->
+    <h2
+      class="text-base font-semibold leading-snug mb-2 line-clamp-2 transition-colors duration-150"
+      style="color: var(--text-1);"
+    >
+      {post.title}
+    </h2>
+
+    <!-- Description -->
+    <p class="text-sm line-clamp-2 mb-4 flex-1" style="color: var(--text-3);">
+      {post.description}
+    </p>
+
+    <!-- Footer meta -->
+    <div class="flex items-center justify-between text-xs" style="color: var(--text-3);">
+      <time datetime={post.publishedAt}>{pubDate}</time>
+      <div class="flex items-center gap-2">
+        <span>{readingTime} min read</span>
+        <span
+          class="font-medium opacity-0 group-hover:opacity-100 transition-opacity"
+          style="color: var(--brand);"
+        >→</span>
+      </div>
+    </div>
+  </div>
+</a>
+
+<style>
+  .post-card:hover {
+    border-color: oklch(0.790 0.137 193.8 / 0.45) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px var(--shadow-color);
+  }
+  .post-card:hover h2 { color: var(--brand) !important; }
+</style>

@@ -9,7 +9,7 @@ const menuItems = [
   { label: "Projects", path: "/projects" },
   { label: "Experience", path: "/experience" },
   { label: "Testimonials", path: "/testimonials" },
-  { label: "Blog", path: "/blog" },
+  { label: "Blog", path: "https://blog.subhanfarrakh.com" },
   { label: "Contact", path: "/contact" },
 ];
 
