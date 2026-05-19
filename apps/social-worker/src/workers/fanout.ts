@@ -4,42 +4,36 @@ import { config } from '../config.js';
 import type { FanoutJob, Platform } from '../types.js';
 
 /**
- * Poll article.url with HEAD requests until it returns HTTP 200.
- * Throws if the URL is still not live after maxAttempts — BullMQ will
- * then retry the whole fanout job with exponential backoff.
+ * Single liveness check — not a retry loop.
+ * By the time this job runs, Vercel has already confirmed the deployment
+ * succeeded, so the URL should be live. This is a fast sanity check only:
+ * if it fails something is genuinely wrong (wrong URL, CDN issue), and we
+ * want to fail loudly rather than silently post a broken link.
  */
-async function assertLive(url: string, maxAttempts: number): Promise<void> {
-  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-    try {
-      const res = await fetch(url, { method: 'HEAD' });
-      if (res.ok) {
-        console.log(`[fanout] liveness check passed (attempt ${attempt}): ${url}`);
-        return;
-      }
-      console.warn(`[fanout] liveness check ${attempt}/${maxAttempts}: ${url} → ${res.status}`);
-    } catch (err) {
-      console.warn(`[fanout] liveness check ${attempt}/${maxAttempts}: network error — ${String(err)}`);
-    }
-
-    if (attempt < maxAttempts) {
-      // Linear back-off: 15s, 30s, 45s… between attempts within the same job run
-      await new Promise((r) => setTimeout(r, attempt * 15_000));
-    }
+async function assertLive(url: string): Promise<void> {
+  let res: Response;
+  try {
+    res = await fetch(url, { method: 'HEAD' });
+  } catch (err) {
+    throw new Error(`Liveness check failed — network error for ${url}: ${String(err)}`);
   }
-
-  // Exhausted in-job retries — throw so BullMQ retries the whole job later
-  throw new Error(`Blog URL not live after ${maxAttempts} checks: ${url}`);
+  if (!res.ok) {
+    throw new Error(
+      `Liveness check failed — ${url} returned ${res.status}. ` +
+      `Vercel deploy succeeded but URL is not reachable. Check CDN propagation.`
+    );
+  }
 }
 
 /**
  * Fanout worker — single consumer of the "article:fanout" queue.
  *
- * Flow:
- *  1. Job is delayed by FANOUT_DELAY_MS (default 7 min) at enqueue time,
- *     giving Vercel time to rebuild the blog from Strapi.
- *  2. When the job runs, we verify the URL is actually reachable before
- *     fanning out — guards against slow deploys.
- *  3. On success, one job per active platform is enqueued.
+ * Jobs arrive here in one of two ways:
+ *  1. Promoted immediately by the Vercel deploy webhook (normal path).
+ *  2. Safety-net: the 24h park delay expires with no Vercel webhook received.
+ *
+ * In both cases the worker verifies the URL is live, then fans out to one
+ * job per active platform. Platform workers run independently from there.
  */
 export function startFanoutWorker() {
   const worker = new Worker<FanoutJob>(
@@ -48,8 +42,8 @@ export function startFanoutWorker() {
       const { article } = job.data;
       const active = config.activePlatforms as Platform[];
 
-      // Guard: verify the blog post URL is live before posting anywhere
-      await assertLive(article.url, config.blog.livenessRetries);
+      // Sanity check: URL must be reachable before we post anywhere
+      await assertLive(article.url);
 
       console.log(`[fanout] "${article.title}" is live — fanning out to [${active.join(', ')}]`);
 
@@ -58,7 +52,10 @@ export function startFanoutWorker() {
           platformQueues[platform].add(
             `${platform}:${article.slug}`,
             { platform, article },
-            { jobId: `${platform}:${article.slug}` }
+            {
+              // Dedup: re-triggering the same deploy never double-posts
+              jobId: `${platform}:${article.slug}`,
+            }
           )
         )
       );
@@ -69,7 +66,9 @@ export function startFanoutWorker() {
   );
 
   worker.on('failed', (job, err) => {
-    console.error(`[fanout] job ${job?.id} failed (attempt ${job?.attemptsMade}/${job?.opts.attempts}):`, err.message);
+    console.error(
+      `[fanout] job "${job?.id}" failed (attempt ${job?.attemptsMade}/${job?.opts.attempts}): ${err.message}`
+    );
   });
 
   return worker;

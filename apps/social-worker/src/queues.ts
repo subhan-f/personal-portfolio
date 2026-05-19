@@ -18,6 +18,19 @@ export const fanoutQueue = new Queue<FanoutJob>('article:fanout', {
   },
 });
 
+/**
+ * Promote all DELAYED jobs in the fanout queue to run immediately.
+ * Called when Vercel signals a successful production deployment.
+ * Returns how many jobs were promoted.
+ */
+export async function promotePendingJobs(): Promise<number> {
+  const delayed = await fanoutQueue.getDelayed();
+  if (delayed.length === 0) return 0;
+
+  await Promise.all(delayed.map((job) => job.changeDelay(0)));
+  return delayed.length;
+}
+
 // One queue per platform — each worker consumes independently
 export const PLATFORMS: Platform[] = ['linkedin', 'twitter', 'bluesky', 'reddit', 'hashnode'];
 

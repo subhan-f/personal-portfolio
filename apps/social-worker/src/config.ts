@@ -18,11 +18,17 @@ export const config = {
   },
   blog: {
     baseUrl: optional('BLOG_BASE_URL') || 'https://blog.subhanfarrakh.com',
-    // How long to wait after the Strapi webhook before the fanout job runs.
-    // Gives Vercel time to rebuild and deploy the blog. Default: 7 minutes.
-    fanoutDelayMs: Number(optional('FANOUT_DELAY_MS') || 7 * 60 * 1000),
-    // How many times to retry the liveness check before giving up. Default: 10.
-    livenessRetries: Number(optional('LIVENESS_RETRIES') || 10),
+    // Safety-net delay on parked fanout jobs (ms). If the Vercel webhook never
+    // fires (e.g. worker was down), the job still runs eventually. Default: 24h.
+    parkDelayMs: Number(optional('PARK_DELAY_MS') || 24 * 60 * 60 * 1000),
+  },
+  vercel: {
+    // Secret set in Vercel project → Settings → Webhooks.
+    // Used to verify the X-Vercel-Signature header (HMAC-SHA1).
+    webhookSecret: optional('VERCEL_WEBHOOK_SECRET'),
+    // Restrict promotions to this Vercel project ID (the blog).
+    // Leave blank to accept any project's deploy webhook.
+    blogProjectId: optional('VERCEL_BLOG_PROJECT_ID') || 'prj_W9LIKPIG3iZCcB3wTHduBKjVz2qQ',
   },
 
   // Per-platform credentials — only loaded when the worker for that platform starts
