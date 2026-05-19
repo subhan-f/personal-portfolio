@@ -7,9 +7,32 @@ const { data: experiences } = await fetchStrapi<StrapiList<StrapiExperience>>(
   '/experiences',
   { 'sort': 'publishedAt:desc' }
 );
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  '@id': 'https://subhanfarrakh.com/experience',
+  name: 'Professional Experience',
+  description: "Subhan Farrakh's professional journey in AI automation, full-stack development, and workflow optimization.",
+  url: 'https://subhanfarrakh.com/experience',
+  author: { '@id': 'https://subhanfarrakh.com/#person' },
+  mainEntity: {
+    '@type': 'ItemList',
+    numberOfItems: experiences.length,
+    itemListElement: experiences.map((e, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: `${e.role} at ${e.company}`,
+      url: `https://subhanfarrakh.com/experience/${e.slug}`,
+    })),
+  },
+};
 ---
 
 <MainLayout title="Professional Experience | AI Automation & Development" description="Explore Subhan Farrakh's professional journey in AI automation, full-stack development, and workflow optimization across international clients.">
+  <Fragment slot="head">
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
+  </Fragment>
   <section class="min-h-screen bg-black text-white py-20 px-4 md:px-8">
     <div class="max-w-5xl mx-auto">
       <h1 class="text-4xl md:text-5xl font-bold text-center mb-4">
