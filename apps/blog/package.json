@@ -17,7 +17,7 @@
     "@astrojs/sitemap": "^3.7.2",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
-    "astro": "^6.3.3",
+    "astro": "^6.3.5",
     "clsx": "^2.1.1",
     "framer-motion": "^12.39.0",
     "fuse.js": "^7.3.0",
