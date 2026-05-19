@@ -5,7 +5,7 @@ import { z } from "zod";
 
 const schema = z.object({
   name: z.string().min(1, "Name is required"),
-  email: z.string().email("Invalid email"),
+  email: z.email({ error: "Invalid email" }),
   service: z.string().min(1, "Select a service"),
   budget: z.string().optional(),
   idea: z.string().min(1, "Please describe your idea"),
@@ -23,7 +23,7 @@ export const ContactForm = () => {
 
   const getFieldError = (field: string) => errors[field];
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
     setErrors({});
     setSuccess(false);
@@ -50,7 +50,7 @@ export const ContactForm = () => {
     const result = schema.safeParse(data);
     if (!result.success) {
       const fieldErrors: Record<string, string> = {};
-      for (const [key, msgs] of Object.entries(result.error.flatten().fieldErrors)) {
+      for (const [key, msgs] of Object.entries(z.flattenError(result.error).fieldErrors)) {
         if (msgs && msgs.length > 0) fieldErrors[key] = msgs[0];
       }
       setErrors(fieldErrors);

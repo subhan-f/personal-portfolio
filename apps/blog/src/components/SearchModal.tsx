@@ -15,7 +15,12 @@ export function SearchModal({ posts }: { posts: Post[] }) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const fuse = useMemo(
-    () => new Fuse(posts, { keys: ['title', 'description', 'tags'], threshold: 0.4, minMatchCharLength: 2 }),
+    () =>
+      new Fuse(posts, {
+        keys: ['title', 'description', 'tags'],
+        threshold: 0.4,
+        minMatchCharLength: 2,
+      }),
     [posts]
   );
 
@@ -26,11 +31,17 @@ export function SearchModal({ posts }: { posts: Post[] }) {
     requestAnimationFrame(() => inputRef.current?.focus());
   }, []);
 
-  const closeModal = useCallback(() => { setOpen(false); setQuery(''); }, []);
+  const closeModal = useCallback(() => {
+    setOpen(false);
+    setQuery('');
+  }, []);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') { e.preventDefault(); open ? closeModal() : openModal(); }
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        open ? closeModal() : openModal();
+      }
       if (e.key === 'Escape' && open) closeModal();
     };
     document.addEventListener('keydown', onKey);
@@ -39,7 +50,9 @@ export function SearchModal({ posts }: { posts: Post[] }) {
 
   useEffect(() => {
     document.body.style.overflow = open ? 'hidden' : '';
-    return () => { document.body.style.overflow = ''; };
+    return () => {
+      document.body.style.overflow = '';
+    };
   }, [open]);
 
   return (
@@ -47,11 +60,17 @@ export function SearchModal({ posts }: { posts: Post[] }) {
       {/* Trigger */}
       <button
         onClick={openModal}
-        aria-label="Search posts (⌘K)"
+        aria-label="Search posts (⌘ + K)"
         className="flex items-center justify-center w-8 h-8 rounded-lg transition-colors"
         style={{ color: 'var(--text-3)' }}
-        onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = 'var(--text-1)'; (e.currentTarget as HTMLElement).style.background = 'var(--surface-raised)'; }}
-        onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = 'var(--text-3)'; (e.currentTarget as HTMLElement).style.background = ''; }}
+        onMouseEnter={(e) => {
+          (e.currentTarget as HTMLElement).style.color = 'var(--text-1)';
+          (e.currentTarget as HTMLElement).style.background = 'var(--surface-raised)';
+        }}
+        onMouseLeave={(e) => {
+          (e.currentTarget as HTMLElement).style.color = 'var(--text-3)';
+          (e.currentTarget as HTMLElement).style.background = '';
+        }}
       >
         <Search size={15} />
       </button>
@@ -59,17 +78,26 @@ export function SearchModal({ posts }: { posts: Post[] }) {
       {/* Modal */}
       {open && (
         <div
-          className="fixed inset-0 z-[300] flex items-start justify-center pt-[12vh] px-4"
-          onClick={(e) => { if (e.target === e.currentTarget) closeModal(); }}
+          className="fixed inset-0 z-300 flex items-start justify-center pt-[12vh] px-4"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) closeModal();
+          }}
         >
-          <div className="absolute inset-0" style={{ background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(4px)' }} onClick={closeModal} />
+          <div
+            className="absolute inset-0"
+            style={{ background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(4px)' }}
+            onClick={closeModal}
+          />
 
           <div
             className="relative w-full max-w-lg rounded-2xl overflow-hidden shadow-2xl"
             style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}
           >
             {/* Input */}
-            <div className="flex items-center gap-3 px-4" style={{ borderBottom: '1px solid var(--border-subtle)' }}>
+            <div
+              className="flex items-center gap-3 px-4"
+              style={{ borderBottom: '1px solid var(--border-subtle)' }}
+            >
               <Search size={16} className="shrink-0" style={{ color: 'var(--text-3)' }} />
               <input
                 ref={inputRef}
@@ -99,25 +127,41 @@ export function SearchModal({ posts }: { posts: Post[] }) {
             {results.length > 0 && (
               <ul className="max-h-80 overflow-y-auto">
                 {results.slice(0, 7).map((post) => (
-                  <li key={post.slug} style={{ borderBottom: '1px solid var(--border-subtle)' }} className="last:border-0">
+                  <li
+                    key={post.slug}
+                    style={{ borderBottom: '1px solid var(--border-subtle)' }}
+                    className="last:border-0"
+                  >
                     <a
                       href={`/${post.slug}`}
                       onClick={closeModal}
                       className="flex items-center gap-3 px-4 py-3 group transition-colors"
                       style={{ color: 'var(--text-1)' }}
-                      onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--surface-raised)')}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.background = 'var(--surface-raised)')
+                      }
                       onMouseLeave={(e) => (e.currentTarget.style.background = '')}
                     >
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium truncate">{post.title}</p>
-                        <p className="text-xs truncate mt-0.5" style={{ color: 'var(--text-3)' }}>{post.description}</p>
+                        <p className="text-xs truncate mt-0.5" style={{ color: 'var(--text-3)' }}>
+                          {post.description}
+                        </p>
                       </div>
                       {post.tags[0] && (
-                        <span className="hidden sm:flex items-center gap-1 text-[11px] shrink-0" style={{ color: 'var(--text-3)' }}>
-                          <Hash size={10} />{post.tags[0]}
+                        <span
+                          className="hidden sm:flex items-center gap-1 text-[11px] shrink-0"
+                          style={{ color: 'var(--text-3)' }}
+                        >
+                          <Hash size={10} />
+                          {post.tags[0]}
                         </span>
                       )}
-                      <ArrowRight size={14} className="shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" style={{ color: 'var(--brand)' }} />
+                      <ArrowRight
+                        size={14}
+                        className="shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                        style={{ color: 'var(--brand)' }}
+                      />
                     </a>
                   </li>
                 ))}

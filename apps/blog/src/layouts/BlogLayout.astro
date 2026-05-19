@@ -64,13 +64,9 @@ const ogImage = image ?? 'https://res.cloudinary.com/dkcdwyrjl/image/upload/q_au
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      rel="preload" as="style"
+      rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap"
-      onload="this.onload=null;this.rel='stylesheet'"
     />
-    <noscript>
-      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
-    </noscript>
 
     <!-- Open Graph -->
     <meta property="og:type" content={isPost ? 'article' : 'website'} />
@@ -80,6 +76,7 @@ const ogImage = image ?? 'https://res.cloudinary.com/dkcdwyrjl/image/upload/q_au
     <meta property="og:image" content={ogImage} />
     {isPost && pubDate && <meta property="article:published_time" content={pubDate.toISOString()} />}
     {isPost && updatedDate && <meta property="article:modified_time" content={updatedDate.toISOString()} />}
+    {isPost && <meta property="article:author" content={author} />}
     {tags.map((t) => <meta property="article:tag" content={t} />)}
 
     <!-- Twitter -->

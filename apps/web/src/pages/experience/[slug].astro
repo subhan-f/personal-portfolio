@@ -39,7 +39,7 @@ const schema = {
 
 <MainLayout title={`${experience.role} at ${experience.company} | Subhan Farrakh`} description={experience.shortDescription}>
   <section class="min-h-screen bg-black text-white py-20 px-4 md:px-8">
-    <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
 
     <div class="max-w-4xl mx-auto">
       <a href="/experience" class="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-8 transition-colors">

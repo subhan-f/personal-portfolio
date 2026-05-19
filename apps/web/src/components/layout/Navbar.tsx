@@ -1,22 +1,22 @@
-import { useState, useRef, useEffect } from "react";
-import { FiMenu } from "react-icons/fi";
-import { OverlayMenu } from "./OverlayMenu";
+import { useState, useRef, useEffect } from 'react';
+import { FiMenu } from 'react-icons/fi';
+import { OverlayMenu } from './OverlayMenu';
 
 interface NavbarProps {
   currentPath?: string;
 }
 
-export const Navbar = ({ currentPath = "/" }: NavbarProps) => {
+export const Navbar = ({ currentPath = '/' }: NavbarProps) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [visible, setVisible] = useState(true);
   const [forceVisible, setForceVisible] = useState(false);
 
   const lastScrollY = useRef(0);
   const timerId = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const isHomePage = currentPath === "/";
+  const isHomePage = currentPath === '/';
 
   useEffect(() => {
-    const homeSection = document.getElementById("home");
+    const homeSection = document.getElementById('home');
     if (!homeSection) return;
 
     const observer = new IntersectionObserver(
@@ -53,9 +53,9 @@ export const Navbar = ({ currentPath = "/" }: NavbarProps) => {
       }
       lastScrollY.current = currentScrollY;
     };
-    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener('scroll', handleScroll);
       if (timerId.current) clearTimeout(timerId.current);
     };
   }, [forceVisible, isHomePage]);
@@ -65,26 +65,26 @@ export const Navbar = ({ currentPath = "/" }: NavbarProps) => {
       {/* Outer wrapper: full-width, pointer-events off so it doesn't block clicks */}
       <div
         className={`fixed top-0 left-0 right-0 z-50 flex justify-center pt-4 pointer-events-none transition-all duration-300 ${
-          visible ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"
+          visible ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
         }`}
       >
         {/* Floating glass pill */}
         <nav
           className="pointer-events-auto flex items-center h-11 px-1.5 rounded-2xl"
           style={{
-            background: "oklch(from #0a0a0a l c h / 0.55)",
-            backdropFilter: "blur(12px) saturate(1.8)",
-            WebkitBackdropFilter: "blur(12px) saturate(1.8)",
-            border: "1px solid oklch(from white l c h / 0.08)",
-            boxShadow: "0 1px 3px rgba(0,0,0,0.4), 0 6px 24px rgba(0,0,0,0.25)",
-            isolation: "isolate",
+            background: 'oklch(from #0a0a0a l c h / 0.55)',
+            backdropFilter: 'blur(12px) saturate(1.8)',
+            WebkitBackdropFilter: 'blur(12px) saturate(1.8)',
+            border: '1px solid oklch(from white l c h / 0.08)',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.4), 0 6px 24px rgba(0,0,0,0.25)',
+            isolation: 'isolate',
           }}
           aria-label="Main navigation"
         >
           {/* Logo */}
           <a
             href="/"
-            aria-current={currentPath === "/" ? "page" : undefined}
+            aria-current={currentPath === '/' ? 'page' : undefined}
             className="flex items-center px-3 h-full"
           >
             <img
@@ -96,7 +96,7 @@ export const Navbar = ({ currentPath = "/" }: NavbarProps) => {
           </a>
 
           {/* Divider */}
-          <div className="w-px h-5 bg-white/10 flex-shrink-0" />
+          <div className="w-px h-5 bg-white/10 shrink-0" />
 
           {/* Hamburger */}
           <button
@@ -109,10 +109,10 @@ export const Navbar = ({ currentPath = "/" }: NavbarProps) => {
 
           {/* Divider + Reach Out — desktop only */}
           <div className="hidden lg:flex items-center h-full">
-            <div className="w-px h-5 bg-white/10 flex-shrink-0" />
+            <div className="w-px h-5 bg-white/10 shrink-0" />
             <div className="px-2">
               <a
-                href={isHomePage ? "#contact" : "/contact"}
+                href={isHomePage ? '#contact' : '/contact'}
                 className="flex items-center bg-linear-to-r from-pink-500 to-blue-500 text-white text-sm px-4 py-1.5 rounded-xl font-medium hover:opacity-90 transition-opacity duration-200"
               >
                 Reach Out
