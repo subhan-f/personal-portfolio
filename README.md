@@ -2,7 +2,7 @@
 
 > AI Automation Engineer · Full-Stack Developer · [subhanfarrakh.com](https://subhanfarrakh.com)
 
-![Portfolio Demo](public/demo.gif)
+![Portfolio Demo](apps/web/public/demo.gif)
 
 [![Live](https://img.shields.io/badge/Live-subhanfarrakh.com-0d9488?style=flat-square)](https://subhanfarrakh.com)
 [![Astro](https://img.shields.io/badge/Astro-6-FF5D01?style=flat-square&logo=astro&logoColor=white)](https://astro.build)
