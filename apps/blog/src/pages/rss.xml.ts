@@ -12,12 +12,12 @@ export async function GET(ctx: APIContext) {
   return rss({
     title: 'Subhan Farrakh — Blog',
     description: 'Thoughts on web development, AI, and modern engineering.',
-    site: ctx.site ?? 'https://blog.subhanfarrakh.com',
+    site: ctx.site ?? 'https://subhanfarrakh.com',
     items: posts.map((post) => ({
       title: post.title,
       description: post.description,
       pubDate: new Date(post.publishedAt),
-      link: `/${post.slug}`,
+      link: `/blog/${post.slug}`,
     })),
   });
 }

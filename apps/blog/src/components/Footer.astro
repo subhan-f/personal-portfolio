@@ -44,8 +44,8 @@ const lastDate = lastPost
     <div class="footer-links">
       <div class="link-col">
         <p class="col-heading">Blog</p>
-        <a href="/" class="footer-link">All posts</a>
-        <a href="/rss.xml" class="footer-link">RSS feed</a>
+        <a href={import.meta.env.BASE_URL} class="footer-link">All posts</a>
+        <a href={`${import.meta.env.BASE_URL}rss.xml`} class="footer-link">RSS feed</a>
         <a href="https://subhanfarrakh.com" target="_blank" rel="noopener" class="footer-link">Portfolio</a>
       </div>
       <div class="link-col">

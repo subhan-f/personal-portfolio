@@ -17,7 +17,7 @@ export const config = {
     webhookSecret: optional('WEBHOOK_SECRET'),
   },
   blog: {
-    baseUrl: optional('BLOG_BASE_URL') || 'https://blog.subhanfarrakh.com',
+    baseUrl: optional('BLOG_BASE_URL') || 'https://subhanfarrakh.com/blog',
     // Safety-net delay on parked fanout jobs (ms). If the Vercel webhook never
     // fires (e.g. worker was down), the job still runs eventually. Default: 24h.
     parkDelayMs: Number(optional('PARK_DELAY_MS') || 24 * 60 * 60 * 1000),
@@ -28,7 +28,7 @@ export const config = {
     webhookSecret: optional('VERCEL_WEBHOOK_SECRET'),
     // Restrict promotions to this Vercel project ID (the blog).
     // Leave blank to accept any project's deploy webhook.
-    blogProjectId: optional('VERCEL_BLOG_PROJECT_ID') || 'prj_W9LIKPIG3iZCcB3wTHduBKjVz2qQ',
+    blogProjectId: optional('VERCEL_BLOG_PROJECT_ID') || 'prj_LyvMIZpMSlxPLrC55lbXpcMEpIA0',
   },
 
   // Per-platform credentials — only loaded when the worker for that platform starts

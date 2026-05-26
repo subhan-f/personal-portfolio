@@ -6,7 +6,7 @@ import { useEffect, useRef, useCallback } from 'react';
 const menuItems = [
   { label: 'Home', path: '/', external: false },
   { label: 'Projects', path: '/projects', external: false },
-  { label: 'Blog', path: 'https://blog.subhanfarrakh.com', external: true },
+  { label: 'Blog', path: '/blog', external: false },
   { label: 'About', path: '/about', external: false },
   { label: 'Contact', path: '/contact', external: false },
 ];

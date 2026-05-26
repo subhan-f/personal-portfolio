@@ -3,4 +3,4 @@ Allow: /
 Disallow: /_astro/
 Disallow: /assets/
 
-Sitemap: https://blog.subhanfarrakh.com/sitemap-index.xml
+Sitemap: https://subhanfarrakh.com/blog/sitemap-index.xml

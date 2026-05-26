@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/blog",
+      "destination": "https://subhanfarrakh-blog.vercel.app/"
+    },
+    {
+      "source": "/blog/(.*)",
+      "destination": "https://subhanfarrakh-blog.vercel.app/$1"
+    }
+  ]
+}

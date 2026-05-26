@@ -52,7 +52,7 @@ const currentPath = Astro.url.pathname;
         rel="stylesheet"
       />
     </noscript>
-    <link rel="alternate" type="application/rss+xml" title="Subhan Farrakh Blog" href="https://blog.subhanfarrakh.com/rss.xml" />
+    <link rel="alternate" type="application/rss+xml" title="Subhan Farrakh Blog" href="https://subhanfarrakh.com/blog/rss.xml" />
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonicalURL} />
@@ -73,7 +73,7 @@ const currentPath = Astro.url.pathname;
     <link rel="me" href="https://github.com/subhan-f" />
     <link rel="me" href="https://linkedin.com/in/subhanf" />
     <!-- Cross-reference blog -->
-    <link rel="alternate" type="text/html" href="https://blog.subhanfarrakh.com" title="Subhan Farrakh Blog" />
+    <link rel="alternate" type="text/html" href="https://subhanfarrakh.com/blog" title="Subhan Farrakh Blog" />
     <!-- JSON-LD -->
     <script is:inline type="application/ld+json" set:html={JSON.stringify(myData)} />
     <slot name="head" />

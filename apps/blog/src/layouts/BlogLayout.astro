@@ -31,7 +31,7 @@ const {
   isPost = false,
 } = Astro.props;
 
-const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://blog.subhanfarrakh.com');
+const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://subhanfarrakh.com');
 const ogImage = image ?? 'https://res.cloudinary.com/dkcdwyrjl/image/upload/q_auto/f_auto/v1776130837/og-image_fyzcps.jpg';
 ---
 
@@ -58,7 +58,7 @@ const ogImage = image ?? 'https://res.cloudinary.com/dkcdwyrjl/image/upload/q_au
     <meta name="description" content={description} />
     <link rel="canonical" href={canonicalURL} />
     <link rel="icon" type="image/svg+xml" href="https://res.cloudinary.com/dkcdwyrjl/image/upload/q_auto/f_auto/v1776131024/favicon_bowozg.svg" />
-    <link rel="alternate" type="application/rss+xml" title="Subhan Farrakh" href="/rss.xml" />
+    <link rel="alternate" type="application/rss+xml" title="Subhan Farrakh" href={`${import.meta.env.BASE_URL}rss.xml`} />
     <!-- Cross-reference portfolio -->
     <link rel="alternate" type="text/html" href="https://subhanfarrakh.com" title="Subhan Farrakh Portfolio" />
     <!-- rel=me — entity disambiguation -->

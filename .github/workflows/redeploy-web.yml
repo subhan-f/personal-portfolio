@@ -39,3 +39,13 @@ jobs:
                 \"https://subhanfarrakh.com/contact\"
               ]
             }"
+      - name: Ping Google
+        run: |
+          curl -s "http://www.google.com/ping?sitemap=https://subhanfarrakh.com/sitemap-index.xml"
+          curl -s "https://www.google.com/ping?sitemap=https://subhanfarrakh.com/blog/sitemap-index.xml"
+      
+      - name: Ping Bing
+        run: |
+          curl -s "http://www.bing.com/ping?sitemap=https://subhanfarrakh.com/sitemap-index.xml"
+          curl -s "https://www.bing.com/ping?sitemap=https://subhanfarrakh.com/blog/sitemap-index.xml"
+

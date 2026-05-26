@@ -4,14 +4,15 @@ import sitemap, { ChangeFreqEnum } from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
-  site: process.env.SITE_URL ?? 'https://blog.subhanfarrakh.com',
+  site: 'https://subhanfarrakh.com',
+  base: '/blog/',
   integrations: [
     react(),
     sitemap({
       serialize(item) {
         item.lastmod = new Date().toISOString().split('T')[0];
         item.changefreq = ChangeFreqEnum.WEEKLY;
-        item.priority = item.url === 'https://blog.subhanfarrakh.com/' ? 1.0 : 0.7;
+        item.priority = item.url === 'https://subhanfarrakh.com/blog/' ? 1.0 : 0.7;
         return item;
       },
     }),

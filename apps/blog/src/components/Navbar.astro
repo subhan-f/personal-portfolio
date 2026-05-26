@@ -23,7 +23,7 @@ const searchPosts = posts.map((p) => ({
   <header class="navbar-dock glass">
 
     <!-- Logo -->
-    <a href="/" class="dock-logo" aria-label="Blog home">
+    <a href={import.meta.env.BASE_URL} class="dock-logo" aria-label="Blog home">
       SF<span class="dot">.</span>
     </a>
 
@@ -32,7 +32,7 @@ const searchPosts = posts.map((p) => ({
 
     <!-- Nav links -->
     <nav class="dock-nav" aria-label="Main navigation">
-      <a href="/" class="dock-link">Writing</a>
+      <a href={import.meta.env.BASE_URL} class="dock-link">Writing</a>
       <a href="https://subhanfarrakh.com/about" target="_blank" rel="noopener" class="dock-link">About</a>
     </nav>
 

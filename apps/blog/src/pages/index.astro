@@ -77,12 +77,12 @@ const rest = posts.slice(1);
               <span class="badge-latest">Latest</span>
               <div class="tag-row">
                 {getArticleTags(featured).slice(0, 3).map(tag => (
-                  <a href={`/tag/${tagToSlug(tag)}`} class="tag">{tag}</a>
+                  <a href={`${import.meta.env.BASE_URL}tag/${tagToSlug(tag)}`} class="tag">{tag}</a>
                 ))}
               </div>
             </div>
             <h2 class="featured-title">
-              <a href={`/${featured.slug}`} class="card-link">{featured.title}</a>
+              <a href={`${import.meta.env.BASE_URL}${featured.slug}`} class="card-link">{featured.title}</a>
             </h2>
             {featured.description && <p class="featured-desc">{featured.description}</p>}
             <div class="featured-footer">
@@ -111,7 +111,7 @@ const rest = posts.slice(1);
                   </div>
                   <div class="post-text">
                     <h3 class="post-title">
-                      <a href={`/${post.slug}`} class="card-link">{post.title}</a>
+                      <a href={`${import.meta.env.BASE_URL}${post.slug}`} class="card-link">{post.title}</a>
                     </h3>
                     {post.description && <p class="post-desc">{post.description}</p>}
                     <div class="post-bottom">
@@ -123,7 +123,7 @@ const rest = posts.slice(1);
                       {tags.length > 0 && (
                         <div class="tag-row">
                           {tags.slice(0, 2).map(tag => (
-                            <a href={`/tag/${tagToSlug(tag)}`} class="tag">{tag}</a>
+                            <a href={`${import.meta.env.BASE_URL}tag/${tagToSlug(tag)}`} class="tag">{tag}</a>
                           ))}
                         </div>
                       )}

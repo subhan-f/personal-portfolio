@@ -94,7 +94,7 @@ export const GET: APIRoute = async ({ props }) => {
       // Top: domain label
       h('div', { style: { display: 'flex', alignItems: 'center', gap: 8 } },
         h('span', { style: { color: '#1cd8d2', fontSize: 17, fontWeight: 600, letterSpacing: '-0.01em' } },
-          'blog.subhanfarrakh.com'
+          'subhanfarrakh.com/blog'
         )
       ),
       // Middle: title + tags

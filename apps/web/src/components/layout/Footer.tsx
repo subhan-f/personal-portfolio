@@ -41,7 +41,7 @@ export const Footer = () => {
           <span aria-hidden="true">·</span>
           <a href="/terms" className="hover:text-gray-300 transition-colors">Terms of Service</a>
           <span aria-hidden="true">·</span>
-          <a href="https://blog.subhanfarrakh.com" target="_blank" rel="noopener" className="hover:text-gray-300 transition-colors">Blog</a>
+          <a href="/blog" className="hover:text-gray-300 transition-colors">Blog</a>
         </div>
         <p className="text-xs text-gray-400">
           &copy; {new Date().getFullYear()} Subhan Farrakh. All rights reserved.

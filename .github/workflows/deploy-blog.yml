@@ -20,3 +20,29 @@ jobs:
         env:
           VERCEL_BLOG_DEPLOY_HOOK: ${{ secrets.VERCEL_BLOG_DEPLOY_HOOK }}
         run: curl -X POST "$VERCEL_BLOG_DEPLOY_HOOK"
+
+      - name: Submit to IndexNow
+        env:
+          INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
+        run: |
+          curl -s -X POST "https://api.indexnow.org/indexnow" \
+            -H "Content-Type: application/json; charset=utf-8" \
+            -d "{
+              \"host\": \"subhanfarrakh.com\",
+              \"key\": \"$INDEXNOW_KEY\",
+              \"keyLocation\": \"https://subhanfarrakh.com/$INDEXNOW_KEY.txt\",
+              \"urlList\": [
+                \"https://subhanfarrakh.com/blog/\"
+              ]
+            }"
+      - name: Ping Google
+        run: |
+          curl -s "http://www.google.com/ping?sitemap=https://subhanfarrakh.com/sitemap-index.xml"
+          curl -s "https://www.google.com/ping?sitemap=https://subhanfarrakh.com/blog/sitemap-index.xml"
+      
+      - name: Ping Bing
+        run: |
+          curl -s "http://www.bing.com/ping?sitemap=https://subhanfarrakh.com/sitemap-index.xml"
+          curl -s "https://www.bing.com/ping?sitemap=https://subhanfarrakh.com/blog/sitemap-index.xml"
+
+
