@@ -1,6 +1,11 @@
 {
   "redirects": [
     {
+      "source": "/blog",
+      "destination": "https://subhanfarrakh.com/blog/",
+      "statusCode": 301
+    },
+    {
       "source": "/",
       "has": [{ "type": "host", "value": "blog.subhanfarrakh.com" }],
       "destination": "https://subhanfarrakh.com/blog/",
@@ -14,10 +19,6 @@
     }
   ],
   "rewrites": [
-    {
-      "source": "/blog",
-      "destination": "https://subhanfarrakh-blog.vercel.app/"
-    },
     {
       "source": "/blog/(.*)",
       "destination": "https://subhanfarrakh-blog.vercel.app/$1"
