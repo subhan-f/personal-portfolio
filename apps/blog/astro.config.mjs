@@ -9,6 +9,7 @@ export default defineConfig({
   integrations: [
     react(),
     sitemap({
+      filter: (page) => !page.includes('/blog/tag/'),
       serialize(item) {
         item.lastmod = new Date().toISOString().split('T')[0];
         item.changefreq = ChangeFreqEnum.WEEKLY;
