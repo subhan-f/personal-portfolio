@@ -1,6 +1,12 @@
 {
   "redirects": [
     {
+      "source": "/",
+      "has": [{ "type": "host", "value": "blog.subhanfarrakh.com" }],
+      "destination": "https://subhanfarrakh.com/blog/",
+      "permanent": true
+    },
+    {
       "source": "/:path*",
       "has": [{ "type": "host", "value": "blog.subhanfarrakh.com" }],
       "destination": "https://subhanfarrakh.com/blog/:path*",
