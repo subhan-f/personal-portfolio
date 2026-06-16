@@ -28,7 +28,7 @@
     "onlyBuiltDependencies": ["@swc/core", "core-js-pure", "esbuild", "sharp"]
   },
   "dependencies": {
-    "@strapi/admin": "^5.46.0",
+    "@strapi/admin": "^5.46.1",
     "@strapi/plugin-cloud": "^5.46.0",
     "@strapi/plugin-users-permissions": "^5.46.0",
     "@strapi/provider-upload-cloudinary": "^5.46.0",
